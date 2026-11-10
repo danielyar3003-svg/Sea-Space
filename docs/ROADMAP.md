@@ -18,10 +18,23 @@ services/costs, risks — see `ARCHITECTURE.md`, `API.md`, `SERVICES.md`, `SECUR
 | Home dashboard, Profile (create from suggested profile, edit, sea service), Settings | ✅ 10 Flutter tests |
 | Dockerfile, docker-compose, CI workflow | 🟡 written, not yet run (Docker Hub blocked in the dev sandbox; CI runs on first push) |
 
-## Phase 3 — Company intelligence ⏳
-Company CRUD + duplicate detection/merge; contacts with verification states; fleet database;
-discovery engine with pluggable sources (official sites, careers pages, registries, search API),
-robots.txt + rate limits, results imported only by user action; vacancies.
+## Phase 3 — Company intelligence ✅ (with limitations)
+| Item | Status |
+|---|---|
+| Companies: CRUD, filters, name normalisation, duplicate detection (name / website domain) with explicit override, merge, notes, websites, sources | ✅ |
+| Verification only via `/verify` with the source the user checked; DB enforces "verified needs source + date" | ✅ |
+| HR contacts: people vs recruitment inboxes, e-mail origin (published / entered / guessed), domain-consistency flag, filters | ✅ |
+| Guessed (inferred) e-mails can never be verified — API check + DB constraint (migration 0002) | ✅ |
+| Fleet: vessel types, IMO checksum, separate owner and operator links, crewing employer = unknown by default | ✅ |
+| Vacancies: unverified until checked, automatic expiry after deadline, salary validation | ✅ |
+| Discovery: SSRF-safe fetcher, robots.txt, throttling; website research → sourced findings → explicit import | ✅ tested against a local fixture site |
+| Research targets from the brief (names only) | ✅ |
+| Web search (Brave Search API) | 🟡 client written; untested against the live API until a key is configured |
+| Flutter: Companies list/detail/form, duplicate dialog, research sheet, Discover (employers, vacancies, search), HR Contacts, Fleet, duplicates review | ✅ 16 Flutter tests incl. a contract test on real API responses |
+
+Limitations: website research reads at most 4 pages per site and does not render JavaScript-only
+sites; public registries (fleet/business) need per-source adapters (not yet written); the
+duplicate check compares within one user's workspace only.
 
 ## Phase 4 — CRM ⏳
 Kanban pipeline (14 statuses), status history, company timeline, follow-ups and reminders.

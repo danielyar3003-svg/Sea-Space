@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
 import '../core/auth/auth_service.dart';
+import 'demo_companies.dart';
 
 class DemoAuthService extends AuthService {
   bool _signedIn = false;
@@ -47,6 +48,7 @@ class DemoBackend {
   final _profiles = <Map<String, dynamic>>[];
   final _activity = <Map<String, dynamic>>[];
   var _seq = 0;
+  late final _companies = DemoCompanies(id: _id, now: _now, json: _json, log: _log);
 
   String _id() => 'demo-${++_seq}';
   String _now() => DateTime.now().toUtc().toIso8601String();
@@ -97,17 +99,9 @@ class DemoBackend {
 
     if (rest.first == 'dashboard') {
       return _json({
-        'counts': {
-          'companies': 0,
-          'verified_contacts': 0,
-          'applications_sent': 0,
-          'replies_received': 0,
-          'pending_follow_ups': 0,
-          'interviews': 0,
-          'offers': 0,
-        },
+        'counts': _companies.counts(),
         'upcoming_follow_ups': [],
-        'new_companies': [],
+        'new_companies': _companies.newCompanies(),
         'recent_activity': _activity.take(10).toList(),
       });
     }
@@ -118,7 +112,7 @@ class DemoBackend {
       return _json(null, 204);
     }
 
-    if (rest.first != 'profiles') return _notFound('Route');
+    if (rest.first != 'profiles') return _companies.handle(req, rest, body) ?? _notFound('Route');
 
     // /profiles
     if (rest.length == 1) {

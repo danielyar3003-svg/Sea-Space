@@ -90,3 +90,9 @@ Future<void> pumpApp(
   );
   await tester.pumpAndSettle();
 }
+
+/// Tap a destination in the bottom navigation bar.
+Future<void> tapNav(WidgetTester tester, String label) async {
+  await tester.tap(find.descendant(of: find.byType(NavigationBar), matching: find.text(label)));
+  await tester.pumpAndSettle();
+}

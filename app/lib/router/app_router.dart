@@ -5,6 +5,12 @@ import 'package:go_router/go_router.dart';
 import '../core/providers.dart';
 import '../features/auth/login_screen.dart';
 import '../features/auth/setup_required_screen.dart';
+import '../features/companies/companies_screen.dart';
+import '../features/companies/company_detail_screen.dart';
+import '../features/companies/company_form_screen.dart';
+import '../features/companies/company_models.dart';
+import '../features/companies/tools_screens.dart';
+import '../features/discover/discover_screen.dart';
 import '../features/home/dashboard_screen.dart';
 import '../features/placeholder/feature_placeholder_screen.dart';
 import '../features/profile/profile_edit_screen.dart';
@@ -49,32 +55,27 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [GoRoute(path: Routes.home, builder: (_, _) => const DashboardScreen())],
           ),
           StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: Routes.discover,
-                builder: (_, _) => const FeaturePlaceholderScreen(
-                  title: 'Discover',
-                  icon: Icons.travel_explore_outlined,
-                  phase: 3,
-                  description:
-                      'Find maritime employers, recruitment contacts and vacancies — '
-                      'including companies with no advertised openings.',
-                ),
-              ),
-            ],
+            routes: [GoRoute(path: Routes.discover, builder: (_, _) => const DiscoverScreen())],
           ),
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: Routes.companies,
-                builder: (_, _) => const FeaturePlaceholderScreen(
-                  title: 'Companies',
-                  icon: Icons.apartment_outlined,
-                  phase: 3,
-                  description:
-                      'Your employer database with fleets, hiring status, '
-                      'HR contacts and source links.',
-                ),
+                builder: (_, _) => const CompaniesScreen(),
+                routes: [
+                  GoRoute(path: 'new', builder: (_, _) => const CompanyFormScreen()),
+                  GoRoute(path: 'duplicates', builder: (_, _) => const DuplicatesScreen()),
+                  GoRoute(
+                    path: ':id',
+                    builder: (_, state) => CompanyDetailScreen(companyId: state.pathParameters['id']!),
+                    routes: [
+                      GoRoute(
+                        path: 'edit',
+                        builder: (_, state) => CompanyFormScreen(existing: state.extra as CompanyDetail?),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),
@@ -113,6 +114,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/tools/:id',
         builder: (_, state) {
+          switch (state.pathParameters['id']) {
+            case 'contacts':
+              return const ContactsScreen();
+            case 'fleet':
+              return const FleetScreen();
+          }
           final f = featureById(state.pathParameters['id']!);
           if (f == null) {
             return const FeaturePlaceholderScreen(

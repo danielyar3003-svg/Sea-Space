@@ -16,11 +16,14 @@ enum ApiErrorKind {
 }
 
 class ApiException implements Exception {
-  const ApiException(this.kind, this.message, {this.statusCode});
+  const ApiException(this.kind, this.message, {this.statusCode, this.details});
 
   final ApiErrorKind kind;
   final String message;
   final int? statusCode;
+
+  /// Structured `detail` from the server when it is an object (e.g. duplicate candidates).
+  final Map<String, dynamic>? details;
 
   @override
   String toString() => message;
@@ -86,6 +89,9 @@ class ApiClient {
       },
       detail,
       statusCode: code,
+      details: decoded is Map && decoded['detail'] is Map
+          ? (decoded['detail'] as Map).cast<String, dynamic>()
+          : null,
     );
   }
 
@@ -101,6 +107,7 @@ class ApiClient {
     if (decoded is! Map) return null;
     final detail = decoded['detail'];
     if (detail is String) return detail;
+    if (detail is Map && detail['message'] is String) return detail['message'] as String;
     if (detail is List && detail.isNotEmpty && detail.first is Map) {
       final first = detail.first as Map;
       final loc = (first['loc'] as List?)?.skip(1).join('.') ?? '';

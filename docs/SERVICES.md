@@ -17,7 +17,7 @@ Nothing below is connected yet except where marked. Each integration reports its
 | Google Play Console | Android release | upload keystore | Yes | 8 |
 | Mapbox **or** Google Maps | Recruitment map | public token (app), restricted by bundle id / domain | Token restricted | 7 |
 | PostHog | Product analytics (only with user consent) | project key | No (public) | 7 |
-| Search API (e.g. Brave / Bing / SerpAPI) | Discovery engine | API key | Yes | 3 |
+| Brave Search API | Discovery web search (optional; website research works without it) | `BRAVE_SEARCH_API_KEY` (backend) | Yes | 3 |
 
 ## Estimated running costs (single user / small team)
 

@@ -29,15 +29,36 @@ Errors are JSON `{"detail": …}`: `401` bad/missing token, `403` deleted accoun
 | DELETE | `/profiles/{id}/experience/{eid}` | Delete entry |
 | GET | `/dashboard/summary` | Live counts + upcoming follow-ups, new companies, recent activity |
 
-## Planned contracts (Phases 3–7)
+## Implemented (Phase 3)
+
+| Method | Path | Description |
+|---|---|---|
+| GET | `/companies` | Filters: `q`, `country`, `hiring_status`, `industry`, `verified`, `limit`, `offset` |
+| POST | `/companies` | Create. `409` with `detail.candidates` for likely duplicates; resend with `allow_duplicate: true` when `can_override` |
+| GET | `/companies/duplicates` | Pairs of likely duplicates (same name, similar name, same website domain) |
+| GET/PATCH/DELETE | `/companies/{id}` | Detail (websites, sources, notes, vessel links) / partial update / soft delete |
+| POST | `/companies/{id}/verify` | `{source_url, confidence?}` — the only way to mark a company verified |
+| POST | `/companies/{id}/merge` | `{into_id}` — moves all related records to the target |
+| POST/DELETE | `/companies/{id}/websites[/{wid}]`, `/sources[/{sid}]`, `/notes[/{nid}]` (+ PATCH note) | |
+| GET | `/contacts` | `filter=all\|verified\|unverified\|generic\|people\|inferred`, `q`, `company_id` |
+| POST | `/companies/{id}/contacts` | Create (e-mail origin stored; `source_url` optional) |
+| PATCH/DELETE | `/contacts/{id}` | Changing a verified e-mail removes the verification |
+| POST | `/contacts/{id}/verify` | Refused (`422`) for guessed e-mails |
+| GET | `/vessel-types` | Shared reference data |
+| GET/POST | `/vessels` | Filters: `q`, `company_id`, `vessel_type_id`; IMO checksum + uniqueness |
+| GET/PATCH/DELETE | `/vessels/{id}`; POST `/vessels/{id}/verify` | |
+| POST/DELETE | `/vessels/{id}/links[/{lid}]` | `{company_id, role: owner\|operator, is_crewing_employer?}` |
+| GET/POST | `/vacancies` | Filters: `status`, `q`, `country`, `company_id`; new = `unverified` |
+| PATCH/DELETE | `/vacancies/{id}`; POST `/vacancies/{id}/verify` | Verify = user checked the posting is open |
+| POST | `/discovery/website` | `{url, company_id?}` → findings with source URL + excerpt; nothing saved |
+| POST | `/discovery/import` | Save one reviewed finding (email / careers_page / contact_page / speculative_policy) |
+| POST | `/discovery/search` | Brave Search; `503` when not configured |
+| GET/POST | `/discovery/targets`, `/discovery/targets/import` | Research targets from the brief (names only) |
+
+## Planned contracts (Phases 4–7)
 
 | Phase | Resource | Endpoints |
 |---|---|---|
-| 3 | Companies | `GET/POST /companies`, `GET/PATCH/DELETE /companies/{id}`, `POST /companies/{id}/merge`, `GET /companies/duplicates`, `/companies/{id}/sources`, `/companies/{id}/websites`, `/companies/{id}/notes` |
-| 3 | Contacts | `GET/POST /companies/{id}/contacts`, `PATCH/DELETE /contacts/{id}`, `GET /contacts?status=verified\|unverified\|generic` |
-| 3 | Fleet | `GET/POST /vessels`, `PATCH/DELETE /vessels/{id}`, `POST /vessels/{id}/owners`, `POST /vessels/{id}/operators`, `GET /vessel-types` |
-| 3 | Discovery | `POST /discovery/runs` (source + query, async), `GET /discovery/runs/{id}` (results with source URLs; user imports items explicitly) |
-| 3 | Vacancies | `GET/POST /vacancies`, `PATCH /vacancies/{id}`, `POST /vacancies/{id}/verify`, saved searches via `/searches` |
 | 4 | CRM | `GET/POST /applications`, `PATCH /applications/{id}` (status change writes history), `GET /applications/board`, `GET /companies/{id}/timeline`, `GET/POST/PATCH /follow-ups` |
 | 5 | Gmail | `GET /mail/oauth/start`, `GET /mail/oauth/callback`, `GET /mail/accounts`, `DELETE /mail/accounts/{id}`, `GET /mail/threads?folder=`, `GET /mail/threads/{id}`, `POST /mail/threads/{id}/link` (confirm/reject company link), `POST /mail/drafts`, `POST /mail/drafts/{id}/send` (requires `confirm: true` + full preview hash), `POST /mail/pubsub` (Google push, verified JWT) |
 | 6 | AI | `POST /ai/drafts` (cover letter / email / reply / follow-up), `POST /ai/translate`, `POST /ai/analyze-reply`, `POST /ai/cv-adapt`, `POST /ai/company-report`, `GET/POST /ai/conversations` |

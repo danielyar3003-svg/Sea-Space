@@ -143,6 +143,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
             ),
             const SizedBox(height: SsSpace.md),
             DropdownButtonFormField<String?>(
+              isExpanded: true,
               initialValue: _english,
               decoration: const InputDecoration(labelText: 'English level'),
               items: [
