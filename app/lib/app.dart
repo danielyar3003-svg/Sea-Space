@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/providers.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/tokens.dart';
 import 'router/app_router.dart';
 
 class SeaSpaceApp extends ConsumerWidget {
@@ -16,6 +18,45 @@ class SeaSpaceApp extends ConsumerWidget {
       darkTheme: SsTheme.dark(),
       themeMode: ThemeMode.dark,
       routerConfig: ref.watch(routerProvider),
+      builder: (context, child) {
+        if (!ref.watch(appConfigProvider).demoMode) return child!;
+        return Column(
+          children: [
+            Expanded(child: child!),
+            const _DemoStrip(),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Always-visible label so demo data can never be mistaken for real data.
+class _DemoStrip extends StatelessWidget {
+  const _DemoStrip();
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: SsColors.warning,
+      child: SizedBox(
+        width: double.infinity,
+        child: SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: SsSpace.md, vertical: SsSpace.xs),
+            child: Text(
+              'DEMO MODE — no server · sign in with any e-mail · data is kept only in this tab',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.black.withValues(alpha: 0.85),
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

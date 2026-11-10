@@ -6,6 +6,7 @@ import '../../core/theme/tokens.dart';
 import '../../core/widgets/widgets.dart';
 import '../../router/app_router.dart';
 import '../../router/features.dart';
+import '../profile/profile_repository.dart';
 import 'dashboard_repository.dart';
 
 class DashboardScreen extends ConsumerWidget {
@@ -32,7 +33,7 @@ class DashboardScreen extends ConsumerWidget {
           onRefresh: () => ref.refresh(dashboardProvider.future),
           children: [
             _StatsGrid(counts: data.counts),
-            if (data.counts.companies == 0) const _GettingStarted(),
+            if (_needsProfile(ref)) const _GettingStarted(),
             _EntrySection(
               'Upcoming follow-ups',
               data.followUps,
@@ -58,6 +59,12 @@ class DashboardScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// True only when the server confirmed there is no profile yet (not while loading or on error).
+bool _needsProfile(WidgetRef ref) {
+  final profile = ref.watch(primaryProfileProvider);
+  return profile.hasValue && profile.value == null;
 }
 
 class _StatsGrid extends StatelessWidget {

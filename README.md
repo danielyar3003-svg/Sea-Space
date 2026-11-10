@@ -72,6 +72,17 @@ flutter run \
 
 Tests: `flutter analyze && flutter test`
 
+### Demo mode (UI preview, no server)
+
+```bash
+flutter run -d chrome --dart-define=DEMO_MODE=true
+```
+
+* Uses an in-memory API and starts empty. Sign in with any e-mail.
+* Data stays only in the open tab.
+* A yellow "DEMO MODE" strip is always visible.
+* Never enabled in normal builds.
+
 ## 4. Supabase setup (sign-in)
 
 1. Create a project.

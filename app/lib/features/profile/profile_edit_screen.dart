@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/theme/tokens.dart';
 import '../../core/widgets/widgets.dart';
+import '../home/dashboard_repository.dart';
 import 'profile_models.dart';
 import 'profile_repository.dart';
 
@@ -80,6 +81,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
         await repo.update(widget.args!.existing!.id!, profile);
       }
       ref.invalidate(primaryProfileProvider);
+      ref.invalidate(dashboardProvider);
       if (mounted) context.pop();
     } catch (e) {
       if (mounted) {

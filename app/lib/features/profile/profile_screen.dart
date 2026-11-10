@@ -7,6 +7,7 @@ import '../../core/widgets/widgets.dart';
 import '../../router/app_router.dart';
 import 'experience_dialog.dart';
 import 'profile_edit_screen.dart';
+import '../home/dashboard_repository.dart';
 import 'profile_models.dart';
 import 'profile_repository.dart';
 
@@ -93,6 +94,7 @@ class _ProfileView extends ConsumerWidget {
         await repo.updateExperience(profile.id!, existing!.id!, result);
       }
       ref.invalidate(primaryProfileProvider);
+      ref.invalidate(dashboardProvider);
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
@@ -116,6 +118,7 @@ class _ProfileView extends ConsumerWidget {
     try {
       await ref.read(profileRepositoryProvider).deleteExperience(profile.id!, e.id!);
       ref.invalidate(primaryProfileProvider);
+      ref.invalidate(dashboardProvider);
     } catch (err) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$err')));

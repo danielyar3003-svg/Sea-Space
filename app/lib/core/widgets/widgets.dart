@@ -61,13 +61,18 @@ class SsStatTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 18, color: SsColors.textTertiary),
-          const SizedBox(height: SsSpace.md),
-          Text(
-            '$value',
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontFeatures: const [FontFeature.tabularFigures()],
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  '$value',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+              ),
+              Icon(icon, size: 18, color: SsColors.textTertiary),
+            ],
           ),
           const SizedBox(height: SsSpace.xxs),
           Text(label, style: theme.textTheme.bodySmall, maxLines: 1, overflow: TextOverflow.ellipsis),
@@ -204,7 +209,7 @@ class SsPage extends StatelessWidget {
           Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: SsSpace.maxContentWidth),
-              child: c,
+              child: SizedBox(width: double.infinity, child: c),
             ),
           ),
       ],

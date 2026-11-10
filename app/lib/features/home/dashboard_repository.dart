@@ -65,11 +65,7 @@ class DashboardSummary {
       ],
       activity: [
         for (final a in list('recent_activity'))
-          DashboardEntry(
-            _humanize(a['action'] as String),
-            a['entity_type'] as String?,
-            DateTime.parse(a['created_at'] as String),
-          ),
+          DashboardEntry(_humanize(a['action'] as String), null, DateTime.parse(a['created_at'] as String)),
       ],
     );
   }
