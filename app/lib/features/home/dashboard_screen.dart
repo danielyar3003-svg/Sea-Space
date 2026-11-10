@@ -8,6 +8,7 @@ import '../../router/app_router.dart';
 import '../../router/features.dart';
 import '../profile/profile_repository.dart';
 import 'dashboard_repository.dart';
+import '../../core/l10n.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -17,10 +18,10 @@ class DashboardScreen extends ConsumerWidget {
     final summary = ref.watch(dashboardProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home'),
+        title: Text(context.l10n.navHome),
         actions: [
           IconButton(
-            tooltip: 'Settings',
+            tooltip: context.l10n.settings,
             icon: const Icon(Icons.settings_outlined),
             onPressed: () => context.push(Routes.settings),
           ),
@@ -35,24 +36,24 @@ class DashboardScreen extends ConsumerWidget {
             _StatsGrid(counts: data.counts),
             if (_needsProfile(ref)) const _GettingStarted(),
             _EntrySection(
-              'Upcoming follow-ups',
+              context.l10n.upcomingFollowUps,
               data.followUps,
               Icons.event_outlined,
-              empty: 'No follow-ups scheduled.',
+              empty: context.l10n.noFollowUps,
             ),
             _EntrySection(
-              'New companies',
+              context.l10n.newCompanies,
               data.newCompanies,
               Icons.apartment_outlined,
-              empty: 'No companies yet.',
+              empty: context.l10n.noCompaniesShort,
             ),
             _EntrySection(
-              'Recent activity',
+              context.l10n.recentActivity,
               data.activity,
               Icons.history,
-              empty: 'Your activity will appear here.',
+              empty: context.l10n.activityEmpty,
             ),
-            const SsSectionHeader('Tools'),
+            SsSectionHeader(context.l10n.tools),
             const _ToolsGrid(),
           ],
         ),
@@ -74,17 +75,33 @@ class _StatsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tiles = [
-      SsStatTile(label: 'Companies', value: counts.companies, icon: Icons.apartment_outlined),
+      SsStatTile(label: context.l10n.statCompanies, value: counts.companies, icon: Icons.apartment_outlined),
       SsStatTile(
-        label: 'Verified HR contacts',
+        label: context.l10n.statVerifiedContacts,
         value: counts.verifiedContacts,
         icon: Icons.verified_outlined,
       ),
-      SsStatTile(label: 'Applications sent', value: counts.applicationsSent, icon: Icons.send_outlined),
-      SsStatTile(label: 'Replies', value: counts.repliesReceived, icon: Icons.mark_email_read_outlined),
-      SsStatTile(label: 'Pending follow-ups', value: counts.pendingFollowUps, icon: Icons.schedule),
-      SsStatTile(label: 'Interviews', value: counts.interviews, icon: Icons.forum_outlined),
-      SsStatTile(label: 'Offers', value: counts.offers, icon: Icons.workspace_premium_outlined),
+      SsStatTile(
+        label: context.l10n.statApplicationsSent,
+        value: counts.applicationsSent,
+        icon: Icons.send_outlined,
+      ),
+      SsStatTile(
+        label: context.l10n.statReplies,
+        value: counts.repliesReceived,
+        icon: Icons.mark_email_read_outlined,
+      ),
+      SsStatTile(
+        label: context.l10n.statPendingFollowUps,
+        value: counts.pendingFollowUps,
+        icon: Icons.schedule,
+      ),
+      SsStatTile(label: context.l10n.statInterviews, value: counts.interviews, icon: Icons.forum_outlined),
+      SsStatTile(
+        label: context.l10n.statOffers,
+        value: counts.offers,
+        icon: Icons.workspace_premium_outlined,
+      ),
     ];
     return LayoutBuilder(
       builder: (context, c) {
@@ -118,12 +135,9 @@ class _GettingStarted extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Start with your profile', style: Theme.of(context).textTheme.titleSmall),
+                  Text(context.l10n.startWithProfile, style: Theme.of(context).textTheme.titleSmall),
                   const SizedBox(height: SsSpace.xxs),
-                  Text(
-                    'Your experience and target positions drive company research and outreach.',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
+                  Text(context.l10n.startWithProfileBody, style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
             ),
@@ -208,7 +222,7 @@ class _ToolsGrid extends StatelessWidget {
                       const SizedBox(width: SsSpace.sm),
                       Expanded(
                         child: Text(
-                          f.title,
+                          f.title(context.l10n),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: Theme.of(context).textTheme.bodyMedium,

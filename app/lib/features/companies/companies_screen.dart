@@ -7,6 +7,7 @@ import '../../core/widgets/widgets.dart';
 import 'company_models.dart';
 import 'company_repository.dart';
 import 'company_widgets.dart';
+import '../../core/l10n.dart';
 
 class CompaniesScreen extends ConsumerStatefulWidget {
   const CompaniesScreen({super.key});
@@ -33,10 +34,10 @@ class _CompaniesScreenState extends ConsumerState<CompaniesScreen> {
     final duplicates = ref.watch(duplicatesProvider).value ?? const [];
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Companies'),
+        title: Text(context.l10n.navCompanies),
         actions: [
           IconButton(
-            tooltip: 'Add company',
+            tooltip: context.l10n.addCompany,
             icon: const Icon(Icons.add),
             onPressed: () => context.push('/companies/new'),
           ),
@@ -48,9 +49,9 @@ class _CompaniesScreenState extends ConsumerState<CompaniesScreen> {
             padding: const EdgeInsets.fromLTRB(SsSpace.gutter, SsSpace.sm, SsSpace.gutter, 0),
             child: TextField(
               controller: _search,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 prefixIcon: Icon(Icons.search, size: 20),
-                hintText: 'Search companies',
+                hintText: context.l10n.searchCompanies,
               ),
               onChanged: (v) =>
                   setState(() => _query = CompanyQuery(q: v, hiringStatus: _query.hiringStatus)),
@@ -62,9 +63,13 @@ class _CompaniesScreenState extends ConsumerState<CompaniesScreen> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: SsSpace.gutter, vertical: SsSpace.sm),
               children: [
-                _FilterChip('All', _query.hiringStatus == null, () => _setStatus(null)),
-                for (final e in hiringStatusLabels.entries)
-                  _FilterChip(e.value, _query.hiringStatus == e.key, () => _setStatus(e.key)),
+                _FilterChip(context.l10n.all, _query.hiringStatus == null, () => _setStatus(null)),
+                for (final s in hiringStatuses)
+                  _FilterChip(
+                    hiringStatusLabel(context.l10n, s),
+                    _query.hiringStatus == s,
+                    () => _setStatus(s),
+                  ),
               ],
             ),
           ),
@@ -77,7 +82,7 @@ class _CompaniesScreenState extends ConsumerState<CompaniesScreen> {
                   children: [
                     const Icon(Icons.call_merge, color: SsColors.warning, size: 20),
                     const SizedBox(width: SsSpace.md),
-                    Expanded(child: Text('${duplicates.length} possible duplicate(s) to review')),
+                    Expanded(child: Text(context.l10n.duplicatesToReview(duplicates.length))),
                     const Icon(Icons.chevron_right, color: SsColors.textTertiary),
                   ],
                 ),
@@ -134,7 +139,7 @@ class _CompanyTile extends StatelessWidget {
     final meta = [
       c.countryCode,
       c.headquarters,
-      if (c.industries.isNotEmpty) c.industries.map((i) => industryLabels[i] ?? i).join(', '),
+      if (c.industries.isNotEmpty) c.industries.map((i) => industryLabel(context.l10n, i)).join(', '),
     ].whereType<String>().join(' · ');
     return SsCard(
       onTap: () => context.push('/companies/${c.id}'),
@@ -159,8 +164,7 @@ class _CompanyTile extends StatelessWidget {
             children: [
               HiringStatusBadge(c.hiringStatus),
               Text(
-                '${c.contactsCount} contact${c.contactsCount == 1 ? '' : 's'} · '
-                '${c.openVacanciesCount} open vacanc${c.openVacanciesCount == 1 ? 'y' : 'ies'}',
+                '${context.l10n.contactsCount(c.contactsCount)} · ${context.l10n.openVacanciesCount(c.openVacanciesCount)}',
                 style: theme.textTheme.bodySmall,
               ),
             ],
@@ -178,18 +182,18 @@ class _Empty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (filtered) {
-      return const SsMessageState(icon: Icons.search_off, title: 'No companies match this filter');
+      return SsMessageState(icon: Icons.search_off, title: context.l10n.noCompaniesMatch);
     }
     return SsMessageState(
       icon: Icons.apartment_outlined,
-      title: 'No companies yet',
-      message: 'Add an employer yourself, or start from the research targets in Discover.',
+      title: context.l10n.noCompaniesYet,
+      message: context.l10n.noCompaniesBody,
       action: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          FilledButton(onPressed: () => context.push('/companies/new'), child: const Text('Add company')),
+          FilledButton(onPressed: () => context.push('/companies/new'), child: Text(context.l10n.addCompany)),
           const SizedBox(height: SsSpace.sm),
-          OutlinedButton(onPressed: () => context.go('/discover'), child: const Text('Open Discover')),
+          OutlinedButton(onPressed: () => context.go('/discover'), child: Text(context.l10n.openDiscover)),
         ],
       ),
     );

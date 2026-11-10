@@ -10,6 +10,7 @@ import '../companies/company_models.dart';
 import '../companies/company_repository.dart';
 import '../companies/company_widgets.dart';
 import '../companies/research_sheet.dart';
+import '../../core/l10n.dart';
 
 class DiscoverScreen extends StatelessWidget {
   const DiscoverScreen({super.key});
@@ -20,11 +21,11 @@ class DiscoverScreen extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Discover'),
-          bottom: const TabBar(
+          title: Text(context.l10n.navDiscover),
+          bottom: TabBar(
             tabs: [
-              Tab(text: 'Employers'),
-              Tab(text: 'Vacancies'),
+              Tab(text: context.l10n.tabEmployers),
+              Tab(text: context.l10n.tabVacancies),
             ],
           ),
         ),
@@ -56,7 +57,7 @@ class _EmployersTab extends ConsumerWidget {
       })).id;
     } on DuplicateCompanyException catch (d) {
       companyId = d.candidates.first.id; // research the company that is already saved
-      if (context.mounted) showInfo(context, 'Using the saved company "${d.candidates.first.name}"');
+      if (context.mounted) showInfo(context, context.l10n.usingSavedCompany(d.candidates.first.name));
     } catch (e) {
       if (context.mounted) showError(context, e);
       return;
@@ -83,26 +84,24 @@ class _EmployersTab extends ConsumerWidget {
                 children: [
                   const Icon(Icons.travel_explore, color: SsColors.accent),
                   const SizedBox(width: SsSpace.md),
-                  Expanded(child: Text('Research an employer website', style: theme.textTheme.titleSmall)),
+                  Expanded(
+                    child: Text(context.l10n.researchEmployerTitle, style: theme.textTheme.titleSmall),
+                  ),
                 ],
               ),
               const SizedBox(height: SsSpace.sm),
-              Text(
-                'Reads the company\'s own public pages for recruitment e-mails, careers pages and '
-                'open-application policies. Works even when no vacancy is advertised.',
-                style: theme.textTheme.bodySmall,
-              ),
+              Text(context.l10n.researchEmployerBody, style: theme.textTheme.bodySmall),
               const SizedBox(height: SsSpace.md),
               FilledButton.icon(
                 onPressed: () => _researchSite(context, ref),
                 icon: const Icon(Icons.search, size: 18),
-                label: const Text('Research a website'),
+                label: Text(context.l10n.researchAWebsite),
               ),
             ],
           ),
         ),
         SsSectionHeader(
-          'Research targets from your brief',
+          context.l10n.researchTargets,
           trailing: targets.maybeWhen(
             data: (t) => t.any((x) => x.companyId == null)
                 ? TextButton(
@@ -114,7 +113,7 @@ class _EmployersTab extends ConsumerWidget {
                         if (context.mounted) showError(context, e);
                       }
                     },
-                    child: const Text('Add all'),
+                    child: Text(context.l10n.addAll),
                   )
                 : null,
             orElse: () => null,
@@ -130,7 +129,9 @@ class _EmployersTab extends ConsumerWidget {
                 for (final t in list)
                   ListTile(
                     title: Text(t.name),
-                    subtitle: Text(t.companyId == null ? 'Not in your companies yet' : 'In your companies'),
+                    subtitle: Text(
+                      t.companyId == null ? context.l10n.notInCompanies : context.l10n.inCompanies,
+                    ),
                     trailing: t.companyId == null
                         ? null
                         : const Icon(Icons.chevron_right, color: SsColors.textTertiary),
@@ -142,13 +143,9 @@ class _EmployersTab extends ConsumerWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(top: SsSpace.sm),
-          child: Text(
-            'Only the names come from your brief. Country, website and hiring status stay empty '
-            'until you research them. This is a starting list, not the whole market.',
-            style: theme.textTheme.bodySmall,
-          ),
+          child: Text(context.l10n.targetsNotice, style: theme.textTheme.bodySmall),
         ),
-        const SsSectionHeader('Web search'),
+        SsSectionHeader(context.l10n.webSearch),
         const _SearchCard(),
       ],
     );
@@ -177,9 +174,9 @@ class _ResearchDialogState extends State<_ResearchDialog> {
   void _submit() {
     final name = _name.text.trim();
     final url = _url.text.trim();
-    final urlError = validateUrl(url);
+    final urlError = validateUrl(context, url);
     if (name.isEmpty || urlError != null) {
-      setState(() => _error = name.isEmpty ? 'Enter the company name' : urlError);
+      setState(() => _error = name.isEmpty ? context.l10n.enterCompanyName : urlError);
       return;
     }
     Navigator.pop(context, (name, url));
@@ -188,7 +185,7 @@ class _ResearchDialogState extends State<_ResearchDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Research a website'),
+      title: Text(context.l10n.researchAWebsite),
       content: SizedBox(
         width: 420,
         child: Column(
@@ -196,14 +193,14 @@ class _ResearchDialogState extends State<_ResearchDialog> {
           children: [
             TextField(
               controller: _name,
-              decoration: const InputDecoration(labelText: 'Company name'),
+              decoration: InputDecoration(labelText: context.l10n.companyName),
             ),
             const SizedBox(height: SsSpace.md),
             TextField(
               controller: _url,
               keyboardType: TextInputType.url,
               decoration: InputDecoration(
-                labelText: 'Official website',
+                labelText: context.l10n.officialWebsite,
                 hintText: 'https://',
                 errorText: _error,
               ),
@@ -213,8 +210,8 @@ class _ResearchDialogState extends State<_ResearchDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-        FilledButton(onPressed: _submit, child: const Text('Research')),
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.cancel)),
+        FilledButton(onPressed: _submit, child: Text(context.l10n.research)),
       ],
     );
   }
@@ -250,10 +247,13 @@ class _SearchCardState extends ConsumerState<_SearchCard> {
         'query': _q.text.trim(),
       });
       final list = ((json as Map)['findings'] as List).cast<Map<String, dynamic>>();
-      setState(() => _results = [for (final f in list) Finding.fromJson(f)]);
-      if (_results.isEmpty) _message = 'No results.';
+      if (!mounted) return;
+      setState(() {
+        _results = [for (final f in list) Finding.fromJson(f)];
+        if (_results.isEmpty) _message = context.l10n.noResults;
+      });
     } on ApiException catch (e) {
-      setState(() => _message = e.message);
+      if (mounted) setState(() => _message = errorText(context, e));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -269,7 +269,7 @@ class _SearchCardState extends ConsumerState<_SearchCard> {
           TextField(
             controller: _q,
             decoration: InputDecoration(
-              hintText: 'e.g. krill trawler crew Norway',
+              hintText: context.l10n.searchHint,
               suffixIcon: _busy
                   ? const Padding(
                       padding: EdgeInsets.all(12),
@@ -290,11 +290,7 @@ class _SearchCardState extends ConsumerState<_SearchCard> {
               title: Text(r.value),
               subtitle: Text('${r.sourceUrl}\n${r.excerpt}', maxLines: 3, overflow: TextOverflow.ellipsis),
             ),
-          if (_results.isNotEmpty)
-            Text(
-              'Search snippets are leads only — open the page and check it.',
-              style: theme.textTheme.bodySmall,
-            ),
+          if (_results.isNotEmpty) Text(context.l10n.snippetsWarning, style: theme.textTheme.bodySmall),
         ],
       ),
     );
@@ -333,7 +329,7 @@ class _VacanciesTabState extends ConsumerState<_VacanciesTab> {
           }
         },
         icon: const Icon(Icons.add),
-        label: const Text('Add vacancy'),
+        label: Text(context.l10n.addVacancy),
       ),
       body: Column(
         children: [
@@ -344,10 +340,10 @@ class _VacanciesTabState extends ConsumerState<_VacanciesTab> {
               padding: const EdgeInsets.symmetric(horizontal: SsSpace.gutter, vertical: SsSpace.sm),
               children: [
                 for (final (label, value) in [
-                  ('All', null),
-                  ('Active', 'active'),
-                  ('Unverified', 'unverified'),
-                  ('Expired', 'expired'),
+                  (context.l10n.all, null),
+                  (context.l10n.vacActive, 'active'),
+                  (context.l10n.vacUnverified, 'unverified'),
+                  (context.l10n.vacExpired, 'expired'),
                 ])
                   Padding(
                     padding: const EdgeInsets.only(right: SsSpace.sm),
@@ -366,12 +362,10 @@ class _VacanciesTabState extends ConsumerState<_VacanciesTab> {
               loading: () => const SsLoading(),
               error: (e, _) => SsErrorState(error: e, onRetry: () => ref.invalidate(vacanciesProvider)),
               data: (list) => list.isEmpty
-                  ? const SsMessageState(
+                  ? SsMessageState(
                       icon: Icons.work_outline,
-                      title: 'No vacancies saved',
-                      message:
-                          'Add a vacancy with the link to its posting. It stays "unverified" until '
-                          'you confirm the posting is still open.',
+                      title: context.l10n.noVacancies,
+                      message: context.l10n.noVacanciesBody,
                     )
                   : ListView.separated(
                       padding: const EdgeInsets.fromLTRB(SsSpace.gutter, 0, SsSpace.gutter, 96),
@@ -398,7 +392,7 @@ class _VacanciesTabState extends ConsumerState<_VacanciesTab> {
       v.countryCode,
       v.vesselType,
       v.rotation,
-      if (v.deadline != null) 'Deadline ${formatDate(v.deadline!)}',
+      if (v.deadline != null) context.l10n.deadline(formatDate(v.deadline!)),
     ].whereType<String>().join(' · ');
     Future<void> act(Future<void> Function() f) async {
       try {
@@ -435,9 +429,10 @@ class _VacanciesTabState extends ConsumerState<_VacanciesTab> {
             },
             itemBuilder: (_) => [
               if (v.status != 'expired')
-                const PopupMenuItem(value: 'verify', child: Text('I checked: still open')),
-              if (v.status != 'expired') const PopupMenuItem(value: 'expire', child: Text('Mark as expired')),
-              const PopupMenuItem(value: 'delete', child: Text('Delete')),
+                PopupMenuItem(value: 'verify', child: Text(context.l10n.checkedStillOpen)),
+              if (v.status != 'expired')
+                PopupMenuItem(value: 'expire', child: Text(context.l10n.markExpired)),
+              PopupMenuItem(value: 'delete', child: Text(context.l10n.delete)),
             ],
           ),
         ],
@@ -474,12 +469,12 @@ class _VacancyDialogState extends State<_VacancyDialog> {
 
   void _save() {
     if (_t(_employer) == null || _t(_position) == null) {
-      setState(() => _error = 'Employer and position are required');
+      setState(() => _error = context.l10n.employerPositionRequired);
       return;
     }
-    final urlErr = validateUrl(_url.text.trim());
+    final urlErr = validateUrl(context, _url.text.trim());
     if (urlErr != null) {
-      setState(() => _error = 'Link to the posting: $urlErr');
+      setState(() => _error = context.l10n.postingLinkError(urlErr));
       return;
     }
     Navigator.pop(context, {
@@ -495,7 +490,7 @@ class _VacancyDialogState extends State<_VacancyDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add vacancy'),
+      title: Text(context.l10n.addVacancy),
       content: SizedBox(
         width: 440,
         child: SingleChildScrollView(
@@ -504,34 +499,37 @@ class _VacancyDialogState extends State<_VacancyDialog> {
             children: [
               TextField(
                 controller: _position,
-                decoration: const InputDecoration(labelText: 'Position *'),
+                decoration: InputDecoration(labelText: context.l10n.positionRequired),
               ),
               const SizedBox(height: SsSpace.md),
               TextField(
                 controller: _employer,
-                decoration: const InputDecoration(labelText: 'Employer *'),
+                decoration: InputDecoration(labelText: context.l10n.employerRequired),
               ),
               const SizedBox(height: SsSpace.md),
               TextField(
                 controller: _url,
                 keyboardType: TextInputType.url,
-                decoration: const InputDecoration(labelText: 'Link to the posting *', hintText: 'https://'),
+                decoration: InputDecoration(
+                  labelText: context.l10n.postingLinkRequired,
+                  hintText: 'https://',
+                ),
               ),
               const SizedBox(height: SsSpace.md),
               TextField(
                 controller: _country,
                 maxLength: 2,
-                decoration: const InputDecoration(labelText: 'Country (2 letters)', counterText: ''),
+                decoration: InputDecoration(labelText: context.l10n.countryTwoLetters, counterText: ''),
               ),
               const SizedBox(height: SsSpace.md),
               TextField(
                 controller: _vesselType,
-                decoration: const InputDecoration(labelText: 'Vessel type'),
+                decoration: InputDecoration(labelText: context.l10n.vesselType),
               ),
               const SizedBox(height: SsSpace.md),
               TextField(
                 controller: _rotation,
-                decoration: const InputDecoration(labelText: 'Rotation'),
+                decoration: InputDecoration(labelText: context.l10n.rotation),
               ),
               if (_error != null)
                 Padding(
@@ -543,8 +541,8 @@ class _VacancyDialogState extends State<_VacancyDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-        FilledButton(onPressed: _save, child: const Text('Add')),
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.cancel)),
+        FilledButton(onPressed: _save, child: Text(context.l10n.add)),
       ],
     );
   }

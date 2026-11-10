@@ -4,6 +4,7 @@ library;
 import 'package:flutter/material.dart';
 
 import '../theme/tokens.dart';
+import '../../core/l10n.dart';
 
 /// Bordered surface card — the basic building block of every screen.
 class SsCard extends StatelessWidget {
@@ -181,12 +182,12 @@ class SsErrorState extends StatelessWidget {
     return SsMessageState(
       icon: Icons.cloud_off_outlined,
       iconColor: SsColors.warning,
-      title: 'Something went wrong',
-      message: error.toString(),
+      title: context.l10n.somethingWentWrong,
+      message: errorText(context, error),
       action: OutlinedButton.icon(
         onPressed: onRetry,
         icon: const Icon(Icons.refresh, size: 18),
-        label: const Text('Try again'),
+        label: Text(context.l10n.tryAgain),
       ),
     );
   }

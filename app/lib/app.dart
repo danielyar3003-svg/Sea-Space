@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'core/l10n.dart';
 import 'core/providers.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/tokens.dart';
@@ -13,6 +16,14 @@ class SeaSpaceApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
       title: 'SEA SPACE',
+      locale: ref.watch(localeProvider),
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       debugShowCheckedModeBanner: false,
       theme: SsTheme.dark(),
       darkTheme: SsTheme.dark(),
@@ -46,7 +57,7 @@ class _DemoStrip extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: SsSpace.md, vertical: SsSpace.xs),
             child: Text(
-              'DEMO MODE — no server · sign in with any e-mail · data is kept only in this tab',
+              context.l10n.demoBanner,
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.black.withValues(alpha: 0.85),

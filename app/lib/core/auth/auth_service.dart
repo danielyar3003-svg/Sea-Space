@@ -23,8 +23,11 @@ abstract class AuthService extends ChangeNotifier {
 }
 
 class AuthFailure implements Exception {
-  const AuthFailure(this.message);
+  const AuthFailure(this.message, {this.unreachable = false});
   final String message;
+
+  /// True when the auth service could not be reached (the UI shows a translated text).
+  final bool unreachable;
   @override
   String toString() => message;
 }
@@ -80,7 +83,7 @@ class SupabaseAuthService extends AuthService {
     } on sb.AuthException catch (e) {
       throw AuthFailure(e.message);
     } catch (_) {
-      throw const AuthFailure('Could not reach the authentication service.');
+      throw const AuthFailure('Could not reach the authentication service.', unreachable: true);
     }
   }
 

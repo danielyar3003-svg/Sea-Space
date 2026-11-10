@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/tokens.dart';
 import 'profile_models.dart';
+import '../../core/l10n.dart';
 
 /// Add / edit one sea-service entry. Dates are optional and never filled in automatically.
 class ExperienceDialog extends StatefulWidget {
@@ -45,7 +46,7 @@ class _ExperienceDialogState extends State<ExperienceDialog> {
 
   void _save() {
     if (_start != null && _end != null && _end!.isBefore(_start!)) {
-      setState(() => _error = 'End date is before start date.');
+      setState(() => _error = context.l10n.endBeforeStart);
       return;
     }
     Navigator.pop(
@@ -70,7 +71,7 @@ class _ExperienceDialogState extends State<ExperienceDialog> {
         ? empty
         : '${d.day.toString().padLeft(2, '0')}.${d.month.toString().padLeft(2, '0')}.${d.year}';
     return AlertDialog(
-      title: Text(widget.initial?.id == null ? 'Add sea service' : 'Edit sea service'),
+      title: Text(widget.initial?.id == null ? context.l10n.addSeaService : context.l10n.editSeaService),
       content: SizedBox(
         width: 420,
         child: SingleChildScrollView(
@@ -79,28 +80,28 @@ class _ExperienceDialogState extends State<ExperienceDialog> {
             children: [
               TextField(
                 controller: _vessel,
-                decoration: const InputDecoration(labelText: 'Vessel name'),
+                decoration: InputDecoration(labelText: context.l10n.vesselName),
               ),
               const SizedBox(height: SsSpace.md),
               TextField(
                 controller: _type,
-                decoration: const InputDecoration(labelText: 'Vessel type'),
+                decoration: InputDecoration(labelText: context.l10n.vesselType),
               ),
               const SizedBox(height: SsSpace.md),
               TextField(
                 controller: _position,
-                decoration: const InputDecoration(labelText: 'Position'),
+                decoration: InputDecoration(labelText: context.l10n.position),
               ),
               const SizedBox(height: SsSpace.md),
               TextField(
                 controller: _employer,
-                decoration: const InputDecoration(labelText: 'Employer'),
+                decoration: InputDecoration(labelText: context.l10n.employer),
               ),
               const SizedBox(height: SsSpace.md),
               TextField(
                 controller: _duties,
                 maxLines: 3,
-                decoration: const InputDecoration(labelText: 'Duties (comma separated)'),
+                decoration: InputDecoration(labelText: context.l10n.duties),
               ),
               const SizedBox(height: SsSpace.md),
               Row(
@@ -108,14 +109,14 @@ class _ExperienceDialogState extends State<ExperienceDialog> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => _pick(true),
-                      child: Text(label(_start, 'Start date')),
+                      child: Text(label(_start, context.l10n.startDate)),
                     ),
                   ),
                   const SizedBox(width: SsSpace.sm),
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => _pick(false),
-                      child: Text(label(_end, 'End date')),
+                      child: Text(label(_end, context.l10n.endDate)),
                     ),
                   ),
                 ],
@@ -123,7 +124,7 @@ class _ExperienceDialogState extends State<ExperienceDialog> {
               if (_start != null || _end != null)
                 TextButton(
                   onPressed: () => setState(() => _start = _end = null),
-                  child: const Text('Clear dates'),
+                  child: Text(context.l10n.clearDates),
                 ),
               if (_error != null)
                 Padding(
@@ -135,8 +136,8 @@ class _ExperienceDialogState extends State<ExperienceDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-        FilledButton(onPressed: _save, child: const Text('Save')),
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.cancel)),
+        FilledButton(onPressed: _save, child: Text(context.l10n.save)),
       ],
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/tokens.dart';
 import '../../core/widgets/widgets.dart';
+import '../../core/l10n.dart';
 
 /// Shown when the app was built without Supabase settings. Sign-in cannot work,
 /// so the app says so instead of pretending to be connected.
@@ -15,10 +16,8 @@ class SetupRequiredScreen extends StatelessWidget {
       body: SsMessageState(
         icon: Icons.settings_suggest_outlined,
         iconColor: SsColors.warning,
-        title: 'Authentication is not configured',
-        message:
-            'This build has no Supabase project settings, so sign-in is unavailable. '
-            'Rebuild the app with:',
+        title: context.l10n.authNotConfigured,
+        message: context.l10n.authNotConfiguredBody,
         action: SsCard(
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,

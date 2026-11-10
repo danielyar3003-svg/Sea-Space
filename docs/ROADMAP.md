@@ -36,8 +36,23 @@ Limitations: website research reads at most 4 pages per site and does not render
 sites; public registries (fleet/business) need per-source adapters (not yet written); the
 duplicate check compares within one user's workspace only.
 
-## Phase 4 — CRM ⏳
-Kanban pipeline (14 statuses), status history, company timeline, follow-ups and reminders.
+## Phase 4 — CRM ✅ (with limitations)
+| Item | Status |
+|---|---|
+| Applications with 14 pipeline statuses, status history with notes, sent/reply timestamps | ✅ |
+| Kanban board (stages with applications, pipeline order) | ✅ |
+| Follow-up reminders: per application or company, open / overdue / done, "remind in N days" on status change | ✅ |
+| Company timeline built from records (notes, contacts, sources, vacancies, applications, follow-ups) | ✅ |
+| Pipeline statistics: sent, replies, reply rate, median days to reply, interviews, offers | ✅ |
+| Contact must belong to the application's company; per-user isolation incl. RLS | ✅ 6 CRM tests + RLS end-to-end |
+| Push / e-mail reminders when a follow-up is due | ⏳ needs notifications (Phase 7); overdue items are shown in the app |
+| Attachments on applications | ⏳ needs the document vault (Phase 7) |
+
+## Interface languages ✅
+English, Ukrainian and Russian (Flutter gen-l10n, ICU plurals). The choice is stored on the
+device and in the account (`users.locale`), and can be changed on the login screen or in
+Settings. Server validation messages are still English; network/timeout/server errors are
+translated in the app. Source strings: `app/tool/strings.py` → `lib/l10n/*.arb`.
 
 ## Phase 5 — Gmail ⏳
 OAuth (minimal scopes), encrypted tokens, history sync, Watch + Pub/Sub with renewal,

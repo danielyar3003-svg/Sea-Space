@@ -7,6 +7,7 @@ import '../../core/widgets/widgets.dart';
 import '../home/dashboard_repository.dart';
 import 'profile_models.dart';
 import 'profile_repository.dart';
+import '../../core/l10n.dart';
 
 class ProfileEditArgs {
   const ProfileEditArgs({this.existing, this.template});
@@ -85,7 +86,8 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
       if (mounted) context.pop();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not save: $e')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(context.l10n.couldNotSave(errorText(context, e)))));
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -96,7 +98,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isNew ? 'New profile' : 'Edit profile'),
+        title: Text(_isNew ? context.l10n.newProfile : context.l10n.editProfile),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: SsSpace.sm),
@@ -104,7 +106,7 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
               onPressed: _saving ? null : _save,
               child: _saving
                   ? const SizedBox.square(dimension: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('Save'),
+                  : Text(context.l10n.save),
             ),
           ),
         ],
@@ -114,41 +116,37 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
         child: SsPage(
           children: [
             if (widget.args?.template != null)
-              const Padding(
+              Padding(
                 padding: EdgeInsets.only(bottom: SsSpace.lg),
-                child: SsCard(
-                  child: Text(
-                    'Pre-filled from your brief. Check every field — nothing is saved '
-                    'until you tap Save. Certificates and dates are left empty on purpose.',
-                  ),
-                ),
+                child: SsCard(child: Text(context.l10n.prefilledNotice)),
               ),
             TextFormField(
               controller: _label,
-              decoration: const InputDecoration(
-                labelText: 'Profile name',
-                helperText: 'e.g. "Trawl Deckhand"',
+              decoration: InputDecoration(
+                labelText: context.l10n.profileName,
+                helperText: context.l10n.profileNameHint,
               ),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.required : null,
             ),
             const SizedBox(height: SsSpace.md),
             TextFormField(
               controller: _name,
-              decoration: const InputDecoration(labelText: 'Full name'),
+              decoration: InputDecoration(labelText: context.l10n.fullName),
             ),
             const SizedBox(height: SsSpace.md),
             TextFormField(
               controller: _nationality,
-              decoration: const InputDecoration(labelText: 'Nationality'),
+              decoration: InputDecoration(labelText: context.l10n.nationality),
             ),
             const SizedBox(height: SsSpace.md),
             DropdownButtonFormField<String?>(
               isExpanded: true,
               initialValue: _english,
-              decoration: const InputDecoration(labelText: 'English level'),
+              decoration: InputDecoration(labelText: context.l10n.englishLevel),
               items: [
-                const DropdownMenuItem(value: null, child: Text('Not set')),
-                for (final e in englishLevels.entries) DropdownMenuItem(value: e.key, child: Text(e.value)),
+                DropdownMenuItem(value: null, child: Text(context.l10n.notSet)),
+                for (final c in englishLevelCodes)
+                  DropdownMenuItem(value: c, child: Text(englishLevelLabel(context.l10n, c)!)),
               ],
               onChanged: (v) => setState(() => _english = v),
             ),
@@ -156,30 +154,30 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
             TextFormField(
               controller: _years,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(labelText: 'Years at sea'),
+              decoration: InputDecoration(labelText: context.l10n.yearsAtSea),
               validator: (v) {
                 if (v == null || v.trim().isEmpty) return null;
                 final n = double.tryParse(v.trim());
-                return (n == null || n < 0 || n > 70) ? 'Enter a number between 0 and 70' : null;
+                return (n == null || n < 0 || n > 70) ? context.l10n.yearsRange : null;
               },
             ),
             CheckboxListTile(
               contentPadding: EdgeInsets.zero,
               value: _approx,
               onChanged: (v) => setState(() => _approx = v ?? true),
-              title: const Text('Approximate'),
+              title: Text(context.l10n.approximate),
               controlAffinity: ListTileControlAffinity.leading,
             ),
-            const SsSectionHeader('Target positions'),
-            _ChipEditor(items: _positions, hint: 'Add position', onChanged: () => setState(() {})),
-            const SsSectionHeader('Experience areas'),
-            _ChipEditor(items: _areas, hint: 'Add area', onChanged: () => setState(() {})),
-            const SsSectionHeader('Summary'),
+            SsSectionHeader(context.l10n.targetPositions),
+            _ChipEditor(items: _positions, hint: context.l10n.addPosition, onChanged: () => setState(() {})),
+            SsSectionHeader(context.l10n.experienceAreas),
+            _ChipEditor(items: _areas, hint: context.l10n.addArea, onChanged: () => setState(() {})),
+            SsSectionHeader(context.l10n.summary),
             TextFormField(
               controller: _summary,
               maxLines: 5,
               maxLength: 5000,
-              decoration: const InputDecoration(hintText: 'Short professional summary'),
+              decoration: InputDecoration(hintText: context.l10n.summaryHint),
             ),
             if (_isNew && widget.args?.template != null)
               CheckboxListTile(
@@ -187,8 +185,10 @@ class _ProfileEditScreenState extends ConsumerState<ProfileEditScreen> {
                 value: _addSuggestedVessel,
                 onChanged: (v) => setState(() => _addSuggestedVessel = v ?? false),
                 controlAffinity: ListTileControlAffinity.leading,
-                title: Text('Also add vessel: ${CandidateProfile.suggestedInitialExperience.vesselName}'),
-                subtitle: const Text('Without dates — add them later if you have them.'),
+                title: Text(
+                  context.l10n.alsoAddVessel(CandidateProfile.suggestedInitialExperience.vesselName!),
+                ),
+                subtitle: Text(context.l10n.withoutDates),
               ),
           ],
         ),

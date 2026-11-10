@@ -6,14 +6,15 @@ import '../../core/widgets/widgets.dart';
 import 'company_models.dart';
 import 'company_repository.dart';
 import 'company_widgets.dart';
+import '../../core/l10n.dart';
 
-const _kindLabels = {
-  'company_profile': 'Website',
-  'email': 'E-mail addresses',
-  'careers_page': 'Careers pages',
-  'contact_page': 'Contact pages',
-  'speculative_policy': 'Speculative applications',
-  'position_mention': 'Positions mentioned (keywords, not vacancies)',
+Map<String, String> _kindLabels(BuildContext context) => {
+  'company_profile': context.l10n.findingWebsite,
+  'email': context.l10n.findingEmails,
+  'careers_page': context.l10n.findingCareers,
+  'contact_page': context.l10n.findingContacts,
+  'speculative_policy': context.l10n.findingSpeculative,
+  'position_mention': context.l10n.findingPositions,
 };
 
 /// Runs website research and lets the user import findings one by one.
@@ -78,7 +79,7 @@ class _ResearchSheetState extends ConsumerState<_ResearchSheet> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Website research', style: theme.textTheme.titleMedium),
+                    Text(context.l10n.websiteResearch, style: theme.textTheme.titleMedium),
                     Text(widget.url, style: theme.textTheme.bodySmall, overflow: TextOverflow.ellipsis),
                   ],
                 ),
@@ -93,10 +94,10 @@ class _ResearchSheetState extends ConsumerState<_ResearchSheet> {
             future: _report,
             builder: (context, snap) {
               if (snap.connectionState != ConnectionState.done) {
-                return const SsMessageState(
+                return SsMessageState(
                   icon: Icons.travel_explore,
-                  title: 'Reading the website…',
-                  message: 'Only public pages allowed by robots.txt are read, one request at a time.',
+                  title: context.l10n.readingWebsite,
+                  message: context.l10n.readingWebsiteBody,
                   action: SsLoading(),
                 );
               }
@@ -104,8 +105,8 @@ class _ResearchSheetState extends ConsumerState<_ResearchSheet> {
                 return SsMessageState(
                   icon: Icons.error_outline,
                   iconColor: SsColors.warning,
-                  title: 'Research failed',
-                  message: '${snap.error}',
+                  title: context.l10n.researchFailed,
+                  message: errorText(context, snap.error!),
                 );
               }
               final r = snap.data!;
@@ -116,26 +117,22 @@ class _ResearchSheetState extends ConsumerState<_ResearchSheet> {
               return ListView(
                 padding: const EdgeInsets.fromLTRB(SsSpace.lg, SsSpace.sm, SsSpace.lg, SsSpace.xxxl),
                 children: [
-                  Text(
-                    'Read ${r.pagesChecked.length} page(s). Import only what you have checked; '
-                    'imported data stays "unverified" until you verify it.',
-                    style: theme.textTheme.bodySmall,
-                  ),
+                  Text(context.l10n.pagesReadNotice(r.pagesChecked.length), style: theme.textTheme.bodySmall),
                   if (r.findings.isEmpty)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(top: SsSpace.xl),
-                      child: Text('Nothing relevant was found on these pages.'),
+                      child: Text(context.l10n.nothingFound),
                     ),
-                  for (final kind in _kindLabels.keys)
+                  for (final kind in _kindLabels(context).keys)
                     if (groups[kind] != null) ...[
-                      SsSectionHeader(_kindLabels[kind]!),
+                      SsSectionHeader(_kindLabels(context)[kind]!),
                       for (final f in groups[kind]!) _findingTile(f, theme),
                     ],
                   if (r.pagesSkipped.isNotEmpty) ...[
-                    const SsSectionHeader('Skipped pages'),
+                    SsSectionHeader(context.l10n.skippedPages),
                     for (final s in r.pagesSkipped) Text(s, style: theme.textTheme.bodySmall),
                   ],
-                  const SsSectionHeader('Limitations'),
+                  SsSectionHeader(context.l10n.limitations),
                   for (final l in r.limitations)
                     Padding(
                       padding: const EdgeInsets.only(bottom: SsSpace.xs),
@@ -154,10 +151,11 @@ class _ResearchSheetState extends ConsumerState<_ResearchSheet> {
     final key = '${f.kind}|${f.value}';
     final done = _imported.contains(key);
     final hints = [
-      if (f.hints['recruitment_inbox'] == true) 'Recruitment inbox',
-      if (f.hints['generic_inbox'] == true && f.hints['recruitment_inbox'] != true) 'Generic inbox',
-      if (f.hints['domain_matches_site'] == false) 'Different domain from the website',
-      if (f.hints['external_portal'] == true) 'External job portal',
+      if (f.hints['recruitment_inbox'] == true) context.l10n.hintRecruitmentInbox,
+      if (f.hints['generic_inbox'] == true && f.hints['recruitment_inbox'] != true)
+        context.l10n.hintGenericInbox,
+      if (f.hints['domain_matches_site'] == false) context.l10n.hintDifferentDomain,
+      if (f.hints['external_portal'] == true) context.l10n.hintExternalPortal,
     ];
     return Padding(
       padding: const EdgeInsets.only(bottom: SsSpace.sm),
@@ -189,7 +187,7 @@ class _ResearchSheetState extends ConsumerState<_ResearchSheet> {
                       ),
                     ),
                   const SizedBox(height: SsSpace.xs),
-                  Text('Source: ${f.sourceUrl}', style: theme.textTheme.bodySmall),
+                  Text(context.l10n.sourceLabel(f.sourceUrl), style: theme.textTheme.bodySmall),
                 ],
               ),
             ),
@@ -200,7 +198,7 @@ class _ResearchSheetState extends ConsumerState<_ResearchSheet> {
                     ? const Icon(Icons.check_circle, color: SsColors.success)
                     : _busy.contains(key)
                     ? const SizedBox.square(dimension: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                    : TextButton(onPressed: () => _import(f), child: const Text('Import')),
+                    : TextButton(onPressed: () => _import(f), child: Text(context.l10n.import)),
               ),
           ],
         ),

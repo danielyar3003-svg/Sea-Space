@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/widgets/widgets.dart';
 import 'company_models.dart';
+import '../../core/l10n.dart';
 
 class VerificationBadge extends StatelessWidget {
   const VerificationBadge(this.provenance, {super.key});
@@ -15,7 +16,7 @@ class VerificationBadge extends StatelessWidget {
       'inferred' => SsColors.warning,
       _ => SsColors.textTertiary,
     };
-    return SsBadge((verificationLabels[provenance.status] ?? provenance.status).toUpperCase(), color: color);
+    return SsBadge(verificationLabel(context.l10n, provenance.status).toUpperCase(), color: color);
   }
 }
 
@@ -32,7 +33,7 @@ class HiringStatusBadge extends StatelessWidget {
       'no_current_vacancies' => SsColors.warning,
       _ => SsColors.textTertiary,
     };
-    return SsBadge((hiringStatusLabels[status] ?? status).toUpperCase(), color: color);
+    return SsBadge(hiringStatusLabel(context.l10n, status).toUpperCase(), color: color);
   }
 }
 
@@ -42,20 +43,15 @@ String formatDate(DateTime d) {
 }
 
 /// Small helpers for consistent dialogs.
-Future<bool> confirmDialog(
-  BuildContext context,
-  String title,
-  String message, {
-  String action = 'Delete',
-}) async {
+Future<bool> confirmDialog(BuildContext context, String title, String message, {String? action}) async {
   final ok = await showDialog<bool>(
     context: context,
     builder: (ctx) => AlertDialog(
       title: Text(title),
       content: Text(message),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-        FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(action)),
+        TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(context.l10n.cancel)),
+        FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(action ?? context.l10n.delete)),
       ],
     ),
   );
@@ -68,7 +64,7 @@ Future<String?> textInputDialog(
   required String label,
   String? hint,
   String? initial,
-  String action = 'Save',
+  String? action,
   int maxLines = 1,
   String? Function(String)? validator,
 }) {
@@ -89,18 +85,18 @@ Future<String?> textInputDialog(
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.cancel)),
           FilledButton(
             onPressed: () {
               final v = controller.text.trim();
-              final e = v.isEmpty ? 'Required' : validator?.call(v);
+              final e = v.isEmpty ? context.l10n.required : validator?.call(v);
               if (e != null) {
                 setState(() => error = e);
                 return;
               }
               Navigator.pop(ctx, v);
             },
-            child: Text(action),
+            child: Text(action ?? context.l10n.save),
           ),
         ],
       ),
@@ -108,15 +104,15 @@ Future<String?> textInputDialog(
   );
 }
 
-String? validateUrl(String v) {
+String? validateUrl(BuildContext context, String v) {
   final uri = Uri.tryParse(v);
   return (uri == null || !(uri.isScheme('http') || uri.isScheme('https')) || uri.host.isEmpty)
-      ? 'Enter a full link starting with https://'
+      ? context.l10n.invalidUrl
       : null;
 }
 
 void showError(BuildContext context, Object e) {
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorText(context, e))));
 }
 
 void showInfo(BuildContext context, String message) {
@@ -143,7 +139,7 @@ class FactRow extends StatelessWidget {
           Expanded(
             child: selectable && value != null
                 ? SelectableText(value!, style: style)
-                : Text(value ?? 'Unknown', style: style),
+                : Text(value ?? context.l10n.unknown, style: style),
           ),
         ],
       ),

@@ -32,6 +32,9 @@ c.post(f"{A}/vessels/{v['id']}/links", headers=h, json={"company_id": co["id"], 
 c.post(f"{A}/vacancies", headers=h, json={"employer_name": "Contract Fishing AS", "position": "AB",
        "source_url": "https://contract.example/jobs/1", "salary_min": "3000", "currency": "EUR",
        "salary_period": "monthly", "application_deadline": "2099-01-01"})
+app = c.post(f"{A}/applications", headers=h, json={"company_id": co["id"], "position": "AB"}).json()
+app = c.patch(f"{A}/applications/{app['id']}", headers=h,
+              json={"status": "sent", "status_note": "CV sent", "follow_up_in_days": 7}).json()
 dup = c.post(f"{A}/companies", headers=h, json={"name": "Contract Fishing", "country_code": "DK"})
 out = {
   "companies": c.get(f"{A}/companies", headers=h).json(),
@@ -46,6 +49,12 @@ out = {
   "primary_profile": c.post(f"{A}/profiles", headers=h, json={"label": "P", "english_level": "intermediate",
                             "years_of_experience": "4"}).json(),
   "health": c.get("/health/ready").json(),
+  "application_detail": app,
+  "board": c.get(f"{A}/applications/board", headers=h).json(),
+  "stats": c.get(f"{A}/applications/stats", headers=h).json(),
+  "follow_ups": c.get(f"{A}/follow-ups", headers=h).json(),
+  "timeline": c.get(f"{A}/companies/{co['id']}/timeline", headers=h).json(),
+  "me": c.get(f"{A}/me", headers=h).json(),
 }
 command.downgrade(cfg, "base")
 command.upgrade(cfg, "head")

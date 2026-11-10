@@ -7,7 +7,7 @@
 | `app/` | Flutter (iOS, Android, Web / admin) · Riverpod · GoRouter · Material 3 dark design system |
 | `backend/` | Python 3.13 · FastAPI · SQLAlchemy 2 · Alembic · PostgreSQL 16 (row-level security) · Supabase Auth |
 
-**Status:** Phases 1–2 are finished (architecture and foundation). See [docs/ROADMAP.md](docs/ROADMAP.md) for what works today and what is still to come.
+**Status:** Phases 1–4 are finished (architecture, foundation, company intelligence, CRM). The interface is available in English, Ukrainian and Russian. See [docs/ROADMAP.md](docs/ROADMAP.md) for what works today and what is still to come.
 
 Documentation: [Architecture](docs/ARCHITECTURE.md) · [API](docs/API.md) · [Services, credentials & costs](docs/SERVICES.md) · [Security](docs/SECURITY.md) · [Roadmap](docs/ROADMAP.md)
 
@@ -71,6 +71,11 @@ flutter run \
 * Android: `flutter build apk`. iOS: `flutter build ipa`. The iOS build requires macOS with Xcode. Signing setup is part of Phase 8.
 
 Tests: `flutter analyze && flutter test`
+
+### Languages
+
+* All UI text lives in one table: `tool/strings.py` (English / Russian / Ukrainian).
+* After editing it, run `python3 tool/strings.py` and then `flutter gen-l10n`.
 
 ### Demo mode (UI preview, no server)
 

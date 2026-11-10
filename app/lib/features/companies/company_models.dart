@@ -1,34 +1,58 @@
 /// Models for companies, contacts, fleet and vacancies (Phase 3 API).
 library;
 
+import '../../l10n/app_localizations.dart';
+
 DateTime? _date(Object? v) => v == null ? null : DateTime.parse(v as String);
 List<String> _strings(Object? v) => (v as List? ?? const []).cast<String>();
 List<Map<String, dynamic>> _maps(Object? v) => (v as List? ?? const []).cast<Map<String, dynamic>>();
 
-const hiringStatusLabels = {
-  'actively_hiring': 'Actively hiring',
-  'no_current_vacancies': 'No current vacancies',
-  'speculative_accepted': 'Speculative applications accepted',
-  'recruitment_agency': 'Recruitment agency',
-  'unknown': 'Unknown hiring status',
+const hiringStatuses = [
+  'actively_hiring',
+  'no_current_vacancies',
+  'speculative_accepted',
+  'recruitment_agency',
+  'unknown',
+];
+
+String hiringStatusLabel(AppLocalizations l, String status) => switch (status) {
+  'actively_hiring' => l.hiringActive,
+  'no_current_vacancies' => l.hiringNone,
+  'speculative_accepted' => l.hiringSpeculative,
+  'recruitment_agency' => l.hiringAgency,
+  'unknown' => l.hiringUnknown,
+  _ => status,
 };
 
-const industryLabels = {
-  'fishing': 'Fishing',
-  'trawling': 'Trawling',
-  'krill': 'Krill',
-  'seafood_processing': 'Seafood processing',
-  'factory_vessel': 'Factory vessels',
-  'recruitment_agency': 'Recruitment agency',
-  'ship_management': 'Ship management',
-  'other': 'Other',
+const industryCodes = [
+  'fishing',
+  'trawling',
+  'krill',
+  'seafood_processing',
+  'factory_vessel',
+  'recruitment_agency',
+  'ship_management',
+  'other',
+];
+
+String industryLabel(AppLocalizations l, String code) => switch (code) {
+  'fishing' => l.industryFishing,
+  'trawling' => l.industryTrawling,
+  'krill' => l.industryKrill,
+  'seafood_processing' => l.industrySeafood,
+  'factory_vessel' => l.industryFactory,
+  'recruitment_agency' => l.industryAgency,
+  'ship_management' => l.industryShipManagement,
+  'other' => l.industryOther,
+  _ => code,
 };
 
-const verificationLabels = {
-  'verified': 'Verified',
-  'unverified': 'Unverified',
-  'inferred': 'Inferred',
-  'user_provided': 'Entered by you',
+String verificationLabel(AppLocalizations l, String status) => switch (status) {
+  'verified' => l.verVerified,
+  'unverified' => l.verUnverified,
+  'inferred' => l.verInferred,
+  'user_provided' => l.verUserProvided,
+  _ => status,
 };
 
 /// Source attribution shared by companies, contacts and vessels.
@@ -251,7 +275,8 @@ class Contact {
   final bool? domainMatchesCompany;
 
   bool get isGeneric => kind == 'generic_inbox';
-  String get displayName => fullName ?? (isGeneric ? 'Recruitment inbox' : email ?? 'Unnamed contact');
+  String displayName(AppLocalizations l) =>
+      fullName ?? (isGeneric ? l.recruitmentInbox : email ?? l.unnamedContact);
 }
 
 class VesselType {

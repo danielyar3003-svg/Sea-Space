@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/tokens.dart';
 import '../../core/widgets/widgets.dart';
+import '../../core/l10n.dart';
 
 /// Honest placeholder for modules scheduled in later roadmap phases.
 /// It never shows sample data.
@@ -29,9 +30,9 @@ class FeaturePlaceholderScreen extends StatelessWidget {
       appBar: AppBar(title: Text(title), automaticallyImplyLeading: standalone),
       body: SsMessageState(
         icon: icon,
-        title: phase > 0 ? 'Coming in Phase $phase' : title,
+        title: phase > 0 ? context.l10n.comingInPhase(phase) : title,
         message: description,
-        action: phase > 0 ? const SsBadge('NOT YET AVAILABLE', color: SsColors.textSecondary) : null,
+        action: phase > 0 ? SsBadge(context.l10n.notYetAvailable, color: SsColors.textSecondary) : null,
       ),
     );
   }

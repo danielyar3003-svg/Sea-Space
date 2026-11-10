@@ -7,6 +7,7 @@ import '../../core/widgets/widgets.dart';
 import 'company_models.dart';
 import 'company_repository.dart';
 import 'company_widgets.dart';
+import '../../core/l10n.dart';
 
 /// Create or edit a company. Nothing here marks data as verified: that needs /verify.
 class CompanyFormScreen extends ConsumerStatefulWidget {
@@ -100,7 +101,7 @@ class _CompanyFormScreenState extends ConsumerState<CompanyFormScreen> {
     final choice = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('This company may already exist'),
+        title: Text(context.l10n.duplicateTitle),
         content: SizedBox(
           width: 420,
           child: Column(
@@ -116,17 +117,20 @@ class _CompanyFormScreenState extends ConsumerState<CompanyFormScreen> {
                   onTap: () => Navigator.pop(ctx, 'open:${c.id}'),
                 ),
               if (!d.canOverride)
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(top: SsSpace.sm),
-                  child: Text('A company with the same name and country is already saved.'),
+                  child: Text(context.l10n.duplicateSameNameCountry),
                 ),
             ],
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.cancel)),
           if (d.canOverride)
-            FilledButton(onPressed: () => Navigator.pop(ctx, 'create'), child: const Text('Create anyway')),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, 'create'),
+              child: Text(context.l10n.createAnyway),
+            ),
         ],
       ),
     );
@@ -142,7 +146,7 @@ class _CompanyFormScreenState extends ConsumerState<CompanyFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isNew ? 'New company' : 'Edit company'),
+        title: Text(_isNew ? context.l10n.newCompany : context.l10n.editCompany),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: SsSpace.sm),
@@ -150,7 +154,7 @@ class _CompanyFormScreenState extends ConsumerState<CompanyFormScreen> {
               onPressed: _saving ? null : _save,
               child: _saving
                   ? const SizedBox.square(dimension: 16, child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Text('Save'),
+                  : Text(context.l10n.save),
             ),
           ),
         ],
@@ -161,8 +165,8 @@ class _CompanyFormScreenState extends ConsumerState<CompanyFormScreen> {
           children: [
             TextFormField(
               controller: _name,
-              decoration: const InputDecoration(labelText: 'Company name *'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
+              decoration: InputDecoration(labelText: context.l10n.companyNameRequired),
+              validator: (v) => (v == null || v.trim().isEmpty) ? context.l10n.required : null,
             ),
             const SizedBox(height: SsSpace.md),
             Row(
@@ -173,10 +177,14 @@ class _CompanyFormScreenState extends ConsumerState<CompanyFormScreen> {
                     controller: _country,
                     maxLength: 2,
                     textCapitalization: TextCapitalization.characters,
-                    decoration: const InputDecoration(labelText: 'Country', hintText: 'NO', counterText: ''),
+                    decoration: InputDecoration(
+                      labelText: context.l10n.country,
+                      hintText: 'NO',
+                      counterText: '',
+                    ),
                     validator: (v) =>
                         (v != null && v.trim().isNotEmpty && !RegExp(r'^[A-Za-z]{2}$').hasMatch(v.trim()))
-                        ? '2 letters'
+                        ? context.l10n.twoLetters
                         : null,
                   ),
                 ),
@@ -184,7 +192,7 @@ class _CompanyFormScreenState extends ConsumerState<CompanyFormScreen> {
                 Expanded(
                   child: TextFormField(
                     controller: _hq,
-                    decoration: const InputDecoration(labelText: 'Headquarters'),
+                    decoration: InputDecoration(labelText: context.l10n.headquarters),
                   ),
                 ),
               ],
@@ -193,69 +201,68 @@ class _CompanyFormScreenState extends ConsumerState<CompanyFormScreen> {
             DropdownButtonFormField<String>(
               isExpanded: true,
               initialValue: _status,
-              decoration: const InputDecoration(labelText: 'Hiring status'),
+              decoration: InputDecoration(labelText: context.l10n.hiringStatus),
               items: [
-                for (final e in hiringStatusLabels.entries)
-                  DropdownMenuItem(value: e.key, child: Text(e.value)),
+                for (final s in hiringStatuses)
+                  DropdownMenuItem(value: s, child: Text(hiringStatusLabel(context.l10n, s))),
               ],
               onChanged: (v) => setState(() => _status = v ?? 'unknown'),
             ),
-            const SsSectionHeader('Industry'),
+            SsSectionHeader(context.l10n.industry),
             Wrap(
               spacing: SsSpace.sm,
               runSpacing: SsSpace.sm,
               children: [
-                for (final e in industryLabels.entries)
+                for (final code in industryCodes)
                   FilterChip(
-                    label: Text(e.value),
-                    selected: _industries.contains(e.key),
-                    onSelected: (on) =>
-                        setState(() => on ? _industries.add(e.key) : _industries.remove(e.key)),
+                    label: Text(industryLabel(context.l10n, code)),
+                    selected: _industries.contains(code),
+                    onSelected: (on) => setState(() => on ? _industries.add(code) : _industries.remove(code)),
                   ),
               ],
             ),
-            const SsSectionHeader('Recruitment'),
+            SsSectionHeader(context.l10n.recruitment),
             TextFormField(
               controller: _website,
               keyboardType: TextInputType.url,
-              decoration: const InputDecoration(labelText: 'Official website', hintText: 'https://'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? null : validateUrl(v.trim()),
+              decoration: InputDecoration(labelText: context.l10n.officialWebsite, hintText: 'https://'),
+              validator: (v) => (v == null || v.trim().isEmpty) ? null : validateUrl(context, v.trim()),
             ),
             const SizedBox(height: SsSpace.md),
             TextFormField(
               controller: _careers,
               keyboardType: TextInputType.url,
-              decoration: const InputDecoration(labelText: 'Careers page', hintText: 'https://'),
-              validator: (v) => (v == null || v.trim().isEmpty) ? null : validateUrl(v.trim()),
+              decoration: InputDecoration(labelText: context.l10n.careersPage, hintText: 'https://'),
+              validator: (v) => (v == null || v.trim().isEmpty) ? null : validateUrl(context, v.trim()),
             ),
             const SizedBox(height: SsSpace.md),
             TextFormField(
               controller: _email,
               keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
-                labelText: 'Recruitment e-mail',
-                helperText: 'Only an address published by the company',
+              decoration: InputDecoration(
+                labelText: context.l10n.recruitmentEmail,
+                helperText: context.l10n.recruitmentEmailHelper,
               ),
               validator: (v) =>
-                  (v == null || v.trim().isEmpty || v.contains('@')) ? null : 'Not an e-mail address',
+                  (v == null || v.trim().isEmpty || v.contains('@')) ? null : context.l10n.invalidEmail,
             ),
             const SizedBox(height: SsSpace.md),
             TextFormField(
               controller: _policy,
               maxLines: 3,
-              decoration: const InputDecoration(labelText: 'Speculative application policy'),
+              decoration: InputDecoration(labelText: context.l10n.speculativePolicy),
             ),
-            const SsSectionHeader('Fleet & notes'),
+            SsSectionHeader(context.l10n.fleetAndNotes),
             TextFormField(
               controller: _fleet,
               maxLines: 3,
-              decoration: const InputDecoration(labelText: 'Fleet summary'),
+              decoration: InputDecoration(labelText: context.l10n.fleetSummary),
             ),
             const SizedBox(height: SsSpace.md),
             TextFormField(
               controller: _description,
               maxLines: 4,
-              decoration: const InputDecoration(labelText: 'Description'),
+              decoration: InputDecoration(labelText: context.l10n.description),
             ),
           ],
         ),

@@ -8,6 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from app.api.v1 import (
     companies,
     contacts,
+    crm,
     dashboard,
     discovery,
     fleet,
@@ -76,7 +77,8 @@ def create_app() -> FastAPI:
 
     app.include_router(health.router)
     for router in (me.router, profiles.router, dashboard.router, companies.router,
-                   contacts.router, fleet.router, vacancies.router, discovery.router):
+                   contacts.router, fleet.router, vacancies.router, discovery.router,
+                   crm.router):
         app.include_router(router, prefix=settings.api_v1_prefix)
     return app
 

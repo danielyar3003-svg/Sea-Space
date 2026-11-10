@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:sea_space/app.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sea_space/core/auth/auth_service.dart';
 import 'package:sea_space/core/network/api_client.dart';
 import 'package:sea_space/core/providers.dart';
@@ -63,7 +64,9 @@ Future<void> pumpApp(
   Handler? handler,
   Size size = const Size(400, 860),
   List<http.Request>? log,
+  Map<String, Object> prefs = const {},
 }) async {
+  SharedPreferences.setMockInitialValues(prefs);
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);

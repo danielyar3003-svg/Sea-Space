@@ -2,20 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/theme/tokens.dart';
+import '../core/l10n.dart';
 
 class _Destination {
   const _Destination(this.label, this.icon, this.selectedIcon);
-  final String label;
+  final String Function(AppLocalizations l) label;
   final IconData icon;
   final IconData selectedIcon;
 }
 
-const _destinations = [
-  _Destination('Home', Icons.space_dashboard_outlined, Icons.space_dashboard),
-  _Destination('Discover', Icons.travel_explore_outlined, Icons.travel_explore),
-  _Destination('Companies', Icons.apartment_outlined, Icons.apartment),
-  _Destination('Mail', Icons.mail_outline, Icons.mail),
-  _Destination('Profile', Icons.person_outline, Icons.person),
+final _destinations = [
+  _Destination((l) => l.navHome, Icons.space_dashboard_outlined, Icons.space_dashboard),
+  _Destination((l) => l.navDiscover, Icons.travel_explore_outlined, Icons.travel_explore),
+  _Destination((l) => l.navCompanies, Icons.apartment_outlined, Icons.apartment),
+  _Destination((l) => l.navMail, Icons.mail_outline, Icons.mail),
+  _Destination((l) => l.navProfile, Icons.person_outline, Icons.person),
 ];
 
 /// Responsive shell: bottom navigation on phones, navigation rail on tablets / web.
@@ -45,7 +46,11 @@ class AppShell extends StatelessWidget {
             labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
             destinations: [
               for (final d in _destinations)
-                NavigationDestination(icon: Icon(d.icon), selectedIcon: Icon(d.selectedIcon), label: d.label),
+                NavigationDestination(
+                  icon: Icon(d.icon),
+                  selectedIcon: Icon(d.selectedIcon),
+                  label: d.label(context.l10n),
+                ),
             ],
           ),
         ),
@@ -70,7 +75,7 @@ class AppShell extends StatelessWidget {
                 NavigationRailDestination(
                   icon: Icon(d.icon),
                   selectedIcon: Icon(d.selectedIcon),
-                  label: Text(d.label),
+                  label: Text(d.label(context.l10n)),
                 ),
             ],
           ),

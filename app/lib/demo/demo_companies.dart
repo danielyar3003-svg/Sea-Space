@@ -19,6 +19,8 @@ class DemoCompanies {
   final _contacts = <Json>[];
   final _vessels = <Json>[];
   final _vacancies = <Json>[];
+  final _apps = <Json>[];
+  final _followUps = <Json>[];
 
   static const targets = [
     'Cornelis Vrolijk',
@@ -94,6 +96,10 @@ class DemoCompanies {
         return _vacanciesRoute(m, rest, body, q);
       case 'discovery':
         return _discoveryRoute(m, rest, body);
+      case 'applications':
+        return _appsRoute(m, rest, body);
+      case 'follow-ups':
+        return _followUpsRoute(m, rest, body, q);
     }
     return null;
   }
@@ -176,6 +182,27 @@ class DemoCompanies {
       }
     }
     switch (rest[2]) {
+      case 'timeline':
+        return json(
+          [
+            for (final a in _apps.where((a) => a['company_id'] == c['id']))
+              for (final h in (a['history'] as List).cast<Json>())
+                {
+                  'at': h['changed_at'],
+                  'kind': h['from_status'] == null ? 'application_created' : 'status_changed',
+                  'title': h['from_status'] == null ? (a['position'] ?? 'Application') : h['to_status'],
+                  'detail': h['note'],
+                  'application_id': a['id'],
+                },
+            {
+              'at': c['created_at'],
+              'kind': 'company_added',
+              'title': c['name'],
+              'detail': null,
+              'application_id': null,
+            },
+          ]..sort((x, y) => (y['at'] as String).compareTo(x['at'] as String)),
+        );
       case 'verify':
         c
           ..['verification_status'] = 'verified'
@@ -385,15 +412,172 @@ class DemoCompanies {
     return json({'detail': 'Not supported in demo mode'}, 405);
   }
 
+  static const _sentOrLater = {
+    'sent',
+    'waiting_for_reply',
+    'follow_up_needed',
+    'replied',
+    'interview',
+    'offer',
+    'hired',
+    'rejected',
+    'no_vacancies',
+    'keep_in_touch',
+  };
+  static const _replied = {'replied', 'interview', 'offer', 'hired', 'rejected', 'no_vacancies'};
+
+  Json _appOut(Json a) {
+    final open = _followUps.where((f) => f['application_id'] == a['id'] && f['completed_at'] == null).toList()
+      ..sort((x, y) => (x['due_at'] as String).compareTo(y['due_at'] as String));
+    return {
+      ...a,
+      'company_name': _company(a['company_id'] as String)?['name'] ?? '',
+      'next_follow_up_at': open.isEmpty ? null : open.first['due_at'],
+      'follow_ups': [for (final f in _followUps.where((f) => f['application_id'] == a['id'])) _fuOut(f)],
+    };
+  }
+
+  Json _fuOut(Json f) => {
+    ...f,
+    'company_name': _company(f['company_id'] as String)?['name'],
+    'overdue': f['completed_at'] == null && DateTime.parse(f['due_at'] as String).isBefore(DateTime.now()),
+  };
+
+  void _setStatus(Json a, String status, String? note) {
+    if (status == a['status']) return;
+    (a['history'] as List).insert(0, {
+      'id': id(),
+      'from_status': a['status'],
+      'to_status': status,
+      'note': note,
+      'changed_at': now(),
+    });
+    a['status'] = status;
+    if (_sentOrLater.contains(status)) a['sent_at'] ??= now();
+    if (_replied.contains(status)) a['last_reply_at'] ??= now();
+    a['updated_at'] = now();
+  }
+
+  http.Response _appsRoute(String m, List<String> rest, Json body) {
+    if (rest.length == 1 && m == 'GET') return json([for (final a in _apps.reversed) _appOut(a)]);
+    if (rest.length == 1 && m == 'POST') {
+      final a = <String, dynamic>{
+        'id': id(),
+        'company_id': body['company_id'],
+        'position': body['position'],
+        'status': 'discovered',
+        'vacancy_id': null,
+        'contact_id': body['contact_id'],
+        'contact_name': null,
+        'profile_id': null,
+        'notes': null,
+        'sent_at': null,
+        'last_reply_at': null,
+        'created_at': now(),
+        'updated_at': now(),
+        'history': <Json>[
+          {
+            'id': id(),
+            'from_status': null,
+            'to_status': 'discovered',
+            'note': 'Created',
+            'changed_at': now(),
+          },
+        ],
+      };
+      _apps.add(a);
+      log('application.created', 'application');
+      return json(_appOut(a), 201);
+    }
+    if (rest[1] == 'stats') {
+      final sent = _apps.where((a) => a['sent_at'] != null).length;
+      final replied = _apps.where((a) => a['last_reply_at'] != null).length;
+      final open = _followUps.where((f) => f['completed_at'] == null).toList();
+      return json({
+        'total': _apps.length,
+        'by_status': {},
+        'sent': sent,
+        'replied': replied,
+        'reply_rate': sent == 0 ? null : replied / sent,
+        'interviews': _apps.where((a) => a['status'] == 'interview').length,
+        'offers': _apps.where((a) => a['status'] == 'offer').length,
+        'hired': _apps.where((a) => a['status'] == 'hired').length,
+        'open_follow_ups': open.length,
+        'overdue_follow_ups': open.where((f) => _fuOut(f)['overdue'] == true).length,
+        'median_days_to_reply': null,
+      });
+    }
+    final a = _apps.where((x) => x['id'] == rest[1]).firstOrNull;
+    if (a == null) return json({'detail': 'Application not found'}, 404);
+    if (m == 'DELETE') {
+      _apps.remove(a);
+      return json(null, 204);
+    }
+    if (m == 'PATCH') {
+      if (body['status'] case final String s) _setStatus(a, s, body['status_note'] as String?);
+      if (body['follow_up_in_days'] case final int d) {
+        _followUps.add({
+          'id': id(),
+          'title': body['follow_up_title'] ?? 'Follow up on application',
+          'application_id': a['id'],
+          'company_id': a['company_id'],
+          'completed_at': null,
+          'due_at': DateTime.now().toUtc().add(Duration(days: d)).toIso8601String(),
+        });
+      }
+    }
+    return json(_appOut(a));
+  }
+
+  http.Response _followUpsRoute(String m, List<String> rest, Json body, Map<String, String> q) {
+    if (rest.length == 1 && m == 'GET') {
+      final list =
+          _followUps
+              .map(_fuOut)
+              .where(
+                (f) => switch (q['state']) {
+                  'done' => f['completed_at'] != null,
+                  'overdue' => f['overdue'] == true,
+                  'all' => true,
+                  _ => f['completed_at'] == null,
+                },
+              )
+              .toList()
+            ..sort((x, y) => (x['due_at'] as String).compareTo(y['due_at'] as String));
+      return json(list);
+    }
+    if (rest.length == 1 && m == 'POST') {
+      final app = _apps.where((a) => a['id'] == body['application_id']).firstOrNull;
+      final f = <String, dynamic>{
+        'id': id(),
+        'title': body['title'],
+        'due_at': body['due_at'],
+        'completed_at': null,
+        'application_id': body['application_id'],
+        'company_id': app?['company_id'] ?? body['company_id'],
+      };
+      _followUps.add(f);
+      return json(_fuOut(f), 201);
+    }
+    final f = _followUps.where((x) => x['id'] == rest[1]).firstOrNull;
+    if (f == null) return json({'detail': 'Follow-up not found'}, 404);
+    if (m == 'DELETE') {
+      _followUps.remove(f);
+      return json(null, 204);
+    }
+    if (body.containsKey('completed')) f['completed_at'] = body['completed'] == true ? now() : null;
+    return json(_fuOut(f));
+  }
+
   /// Counts for the dashboard in demo mode.
   Json counts() => {
     'companies': _companies.length,
     'verified_contacts': _contacts.where((c) => c['verification_status'] == 'verified').length,
-    'applications_sent': 0,
-    'replies_received': 0,
-    'pending_follow_ups': 0,
-    'interviews': 0,
-    'offers': 0,
+    'applications_sent': _apps.where((a) => a['sent_at'] != null).length,
+    'replies_received': _apps.where((a) => a['last_reply_at'] != null).length,
+    'pending_follow_ups': _followUps.where((f) => f['completed_at'] == null).length,
+    'interviews': _apps.where((a) => a['status'] == 'interview').length,
+    'offers': _apps.where((a) => a['status'] == 'offer').length,
   };
 
   List<Json> newCompanies() => [

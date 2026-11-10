@@ -1,3 +1,5 @@
+import '../../l10n/app_localizations.dart';
+
 /// Candidate profile as returned by `/api/v1/profiles`.
 class Experience {
   const Experience({
@@ -48,13 +50,23 @@ class Experience {
   };
 }
 
-const englishLevels = {
-  'beginner': 'Beginner',
-  'elementary': 'Elementary',
-  'intermediate': 'Intermediate',
-  'upper_intermediate': 'Upper-intermediate',
-  'advanced': 'Advanced',
-  'fluent': 'Fluent',
+const englishLevelCodes = [
+  'beginner',
+  'elementary',
+  'intermediate',
+  'upper_intermediate',
+  'advanced',
+  'fluent',
+];
+
+String? englishLevelLabel(AppLocalizations l, String? code) => switch (code) {
+  'beginner' => l.englishBeginner,
+  'elementary' => l.englishElementary,
+  'intermediate' => l.englishIntermediate,
+  'upper_intermediate' => l.englishUpperIntermediate,
+  'advanced' => l.englishAdvanced,
+  'fluent' => l.englishFluent,
+  _ => null,
 };
 
 class CandidateProfile {

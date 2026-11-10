@@ -1,7 +1,7 @@
 {
  "companies": [
   {
-   "id": "9572a441-6258-4f18-b3c6-86d5e69d28d5",
+   "id": "ba21d016-1ac1-48c9-812b-924e28e44dd2",
    "name": "Contract Fishing AS",
    "country_code": "NO",
    "headquarters": null,
@@ -13,8 +13,8 @@
    ],
    "contacts_count": 1,
    "open_vacancies_count": 0,
-   "created_at": "2026-11-10T09:44:20.712723Z",
-   "updated_at": "2026-11-10T09:44:20.712723Z"
+   "created_at": "2026-11-10T10:07:22.523839Z",
+   "updated_at": "2026-11-10T10:07:22.523839Z"
   }
  ],
  "company_detail": {
@@ -22,7 +22,7 @@
   "verification_status": "user_provided",
   "last_verified_at": null,
   "confidence": null,
-  "id": "9572a441-6258-4f18-b3c6-86d5e69d28d5",
+  "id": "ba21d016-1ac1-48c9-812b-924e28e44dd2",
   "name": "Contract Fishing AS",
   "country_code": "NO",
   "headquarters": null,
@@ -32,8 +32,8 @@
   ],
   "contacts_count": 1,
   "open_vacancies_count": 0,
-  "created_at": "2026-11-10T09:44:20.712723Z",
-  "updated_at": "2026-11-10T09:44:20.712723Z",
+  "created_at": "2026-11-10T10:07:22.523839Z",
+  "updated_at": "2026-11-10T10:07:22.523839Z",
   "speculative_policy": null,
   "careers_url": null,
   "recruitment_email": null,
@@ -43,7 +43,7 @@
   "longitude": null,
   "websites": [
    {
-    "id": "e1040a96-1743-4a49-8097-1f87d08aec07",
+    "id": "85d5dcc2-c591-442f-9b7d-202a3e9716e6",
     "url": "https://contract.example/",
     "kind": "main"
    }
@@ -51,19 +51,19 @@
   "sources": [],
   "notes": [
    {
-    "id": "d8f4f94c-b9b2-40cc-8735-487e0aa33c38",
+    "id": "c907b582-af72-4426-96dc-42cb9f44767e",
     "body": "Note",
-    "created_at": "2026-11-10T09:44:20.764684Z",
-    "updated_at": "2026-11-10T09:44:20.764684Z"
+    "created_at": "2026-11-10T10:07:22.574725Z",
+    "updated_at": "2026-11-10T10:07:22.574725Z"
    }
   ],
   "vessels": [
    {
-    "id": "4f57da8c-a47b-4951-a6c4-6caf758db5b3",
+    "id": "67206153-2bc6-46fb-b928-95b7dc754690",
     "role": "operator",
-    "vessel_id": "5aa0ab88-b759-496a-a250-2f88aa2880c5",
+    "vessel_id": "5a247bf8-a6f0-4a98-b39a-1af19a2eb48a",
     "vessel_name": "MV Contract",
-    "company_id": "9572a441-6258-4f18-b3c6-86d5e69d28d5",
+    "company_id": "ba21d016-1ac1-48c9-812b-924e28e44dd2",
     "company_name": "Contract Fishing AS",
     "valid_from": null,
     "valid_to": null,
@@ -87,17 +87,17 @@
    "phone": null,
    "linkedin_url": null,
    "contact_status": "new",
-   "id": "1d961456-08e2-41d6-8a48-1c4dfc2636a7",
-   "company_id": "9572a441-6258-4f18-b3c6-86d5e69d28d5",
+   "id": "f4c47e30-08bd-499a-9c4f-bc32ae69902b",
+   "company_id": "ba21d016-1ac1-48c9-812b-924e28e44dd2",
    "company_name": "Contract Fishing AS",
    "domain_matches_company": true,
-   "created_at": "2026-11-10T09:44:20.791908Z",
-   "updated_at": "2026-11-10T09:44:20.791908Z"
+   "created_at": "2026-11-10T10:07:22.602745Z",
+   "updated_at": "2026-11-10T10:07:22.602745Z"
   }
  ],
  "vessel_types": [
   {
-   "id": "629f2d76-0778-4ebc-8606-d72065b64b71",
+   "id": "40f192e6-5a04-4e9c-946b-8c1e652de7b4",
    "code": "factory_trawler",
    "name": "Factory trawler",
    "category": "fishing",
@@ -109,7 +109,7 @@
    ]
   },
   {
-   "id": "bbf08c3e-1c64-49bd-8a47-5c38dceb4700",
+   "id": "e68ff3c2-eba5-48f3-8829-1e65574e8108",
    "code": "fish_carrier",
    "name": "Fish carrier / reefer",
    "category": "fishing",
@@ -119,7 +119,7 @@
    ]
   },
   {
-   "id": "14a289b5-8520-49ed-9a97-8e8b8979852c",
+   "id": "f1a3a07e-34ea-4fc8-96d8-1dfbe16713df",
    "code": "krill_trawler",
    "name": "Krill trawler",
    "category": "fishing",
@@ -131,7 +131,7 @@
    ]
   },
   {
-   "id": "ae6bff8f-74c0-442d-97d1-9017921a743a",
+   "id": "96384a8d-02d3-4521-8d44-8b3d44bbc47f",
    "code": "longliner",
    "name": "Longliner",
    "category": "fishing",
@@ -142,14 +142,14 @@
    ]
   },
   {
-   "id": "7071d1f3-5ee9-4f02-9bef-9fb10058ed25",
+   "id": "c26e91a1-1d3e-476a-b423-07308ec84483",
    "code": "other",
    "name": "Other",
    "category": "other",
    "typical_positions": []
   },
   {
-   "id": "560f7603-8fcb-4803-995b-299bb32eb35e",
+   "id": "894b0938-d4f3-4bec-8454-0d9bdbf5d4cd",
    "code": "pelagic_trawler",
    "name": "Pelagic trawler",
    "category": "fishing",
@@ -160,7 +160,7 @@
    ]
   },
   {
-   "id": "ac5406c0-4ab9-473a-803b-9bb9c717019b",
+   "id": "7a07b197-31a8-4002-ba7f-a997dc8d80c1",
    "code": "processing_vessel",
    "name": "Processing / mother ship",
    "category": "fishing",
@@ -170,7 +170,7 @@
    ]
   },
   {
-   "id": "c8aac40a-dcd1-4ba5-8a6d-5e01cce546c4",
+   "id": "67b38fdf-2782-403f-8308-cfe8bd32cfa8",
    "code": "purse_seiner",
    "name": "Purse seiner",
    "category": "fishing",
@@ -180,7 +180,7 @@
    ]
   },
   {
-   "id": "e53799e5-959e-41c3-a07b-0a24683b878d",
+   "id": "082b17c0-5627-42e4-b6b4-a37d314eeecb",
    "code": "stern_trawler",
    "name": "Stern trawler",
    "category": "fishing",
@@ -200,13 +200,13 @@
    "name": "MV Contract",
    "imo_number": "9074729",
    "flag_country_code": null,
-   "vessel_type_id": "629f2d76-0778-4ebc-8606-d72065b64b71",
+   "vessel_type_id": "40f192e6-5a04-4e9c-946b-8c1e652de7b4",
    "fishing_specialization": null,
    "home_country_code": null,
    "notes": null,
-   "id": "5aa0ab88-b759-496a-a250-2f88aa2880c5",
+   "id": "5a247bf8-a6f0-4a98-b39a-1af19a2eb48a",
    "vessel_type": {
-    "id": "629f2d76-0778-4ebc-8606-d72065b64b71",
+    "id": "40f192e6-5a04-4e9c-946b-8c1e652de7b4",
     "code": "factory_trawler",
     "name": "Factory trawler",
     "category": "fishing",
@@ -219,11 +219,11 @@
    },
    "links": [
     {
-     "id": "4f57da8c-a47b-4951-a6c4-6caf758db5b3",
+     "id": "67206153-2bc6-46fb-b928-95b7dc754690",
      "role": "operator",
-     "vessel_id": "5aa0ab88-b759-496a-a250-2f88aa2880c5",
+     "vessel_id": "5a247bf8-a6f0-4a98-b39a-1af19a2eb48a",
      "vessel_name": "MV Contract",
-     "company_id": "9572a441-6258-4f18-b3c6-86d5e69d28d5",
+     "company_id": "ba21d016-1ac1-48c9-812b-924e28e44dd2",
      "company_name": "Contract Fishing AS",
      "valid_from": null,
      "valid_to": null,
@@ -238,8 +238,8 @@
     "Processing Crew",
     "AB"
    ],
-   "created_at": "2026-11-10T09:44:20.843866Z",
-   "updated_at": "2026-11-10T09:44:20.843866Z"
+   "created_at": "2026-11-10T10:07:22.656890Z",
+   "updated_at": "2026-11-10T10:07:22.656890Z"
   }
  ],
  "vacancies": [
@@ -258,11 +258,11 @@
    "requirements": null,
    "application_deadline": "2099-01-01",
    "source_url": "https://contract.example/jobs/1",
-   "id": "ebea2fa8-027c-49c3-85c2-c64d7b60f93c",
+   "id": "9c2a88c0-c463-4c85-b79e-8b3d027a208e",
    "status": "unverified",
-   "discovered_at": "2026-11-10T09:44:20.905323Z",
+   "discovered_at": "2026-11-10T10:07:22.719572Z",
    "last_verified_at": null,
-   "created_at": "2026-11-10T09:44:20.905323Z"
+   "created_at": "2026-11-10T10:07:22.719572Z"
   }
  ],
  "targets": [
@@ -298,7 +298,7 @@
     "message": "A similar company already exists",
     "candidates": [
      {
-      "id": "9572a441-6258-4f18-b3c6-86d5e69d28d5",
+      "id": "ba21d016-1ac1-48c9-812b-924e28e44dd2",
       "name": "Contract Fishing AS",
       "country_code": "NO",
       "reason": "Same name (different country)",
@@ -313,57 +313,74 @@
   "counts": {
    "companies": 1,
    "verified_contacts": 0,
-   "applications_sent": 0,
+   "applications_sent": 1,
    "replies_received": 0,
-   "pending_follow_ups": 0,
+   "pending_follow_ups": 1,
    "interviews": 0,
    "offers": 0
   },
-  "upcoming_follow_ups": [],
+  "upcoming_follow_ups": [
+   {
+    "id": "88338230-2feb-4777-bb4a-899742da80d7",
+    "title": "Follow up on application",
+    "due_at": "2026-11-17T10:07:22.790244Z",
+    "company_id": "ba21d016-1ac1-48c9-812b-924e28e44dd2"
+   }
+  ],
   "new_companies": [
    {
-    "id": "9572a441-6258-4f18-b3c6-86d5e69d28d5",
+    "id": "ba21d016-1ac1-48c9-812b-924e28e44dd2",
     "name": "Contract Fishing AS",
     "country_code": "NO",
     "hiring_status": "unknown",
-    "created_at": "2026-11-10T09:44:20.712723Z"
+    "created_at": "2026-11-10T10:07:22.523839Z"
    }
   ],
   "recent_activity": [
    {
+    "action": "application.updated",
+    "entity_type": "application",
+    "created_at": "2026-11-10T10:07:22.787748Z"
+   },
+   {
+    "action": "application.created",
+    "entity_type": "application",
+    "created_at": "2026-11-10T10:07:22.754508Z"
+   },
+   {
     "action": "vacancy.created",
     "entity_type": "vacancy",
-    "created_at": "2026-11-10T09:44:20.905323Z"
+    "created_at": "2026-11-10T10:07:22.719572Z"
    },
    {
     "action": "vessel.operator_linked",
     "entity_type": "vessel",
-    "created_at": "2026-11-10T09:44:20.872068Z"
+    "created_at": "2026-11-10T10:07:22.685671Z"
    },
    {
     "action": "vessel.created",
     "entity_type": "vessel",
-    "created_at": "2026-11-10T09:44:20.843866Z"
+    "created_at": "2026-11-10T10:07:22.656890Z"
    },
    {
     "action": "contact.created",
     "entity_type": "contact",
-    "created_at": "2026-11-10T09:44:20.791908Z"
+    "created_at": "2026-11-10T10:07:22.602745Z"
    },
    {
     "action": "company.note_added",
     "entity_type": "company",
-    "created_at": "2026-11-10T09:44:20.764684Z"
+    "created_at": "2026-11-10T10:07:22.574725Z"
    },
    {
     "action": "company.created",
     "entity_type": "company",
-    "created_at": "2026-11-10T09:44:20.712723Z"
+    "created_at": "2026-11-10T10:07:22.523839Z"
    },
    {
     "action": "user.provisioned",
     "entity_type": "user",
-    "created_at": "2026-11-10T09:44:20.701994Z"
+    "created_at": "2026-11-10T10:07:22.510550Z"
    }
   ]
  },
@@ -381,11 +398,11 @@
   "phone": null,
   "contact_email": null,
   "home_port": null,
-  "id": "494392d2-65f3-443b-8f58-186e7a94651c",
+  "id": "6428cac0-7b37-4195-aeae-cf37823a2cec",
   "is_primary": true,
   "experience": [],
-  "created_at": "2026-11-10T09:44:21.069435Z",
-  "updated_at": "2026-11-10T09:44:21.069435Z"
+  "created_at": "2026-11-10T10:07:22.971050Z",
+  "updated_at": "2026-11-10T10:07:22.971050Z"
  },
  "health": {
   "status": "ready",
@@ -398,5 +415,218 @@
    "gmail_pubsub": false,
    "web_search": false
   }
+ },
+ "application_detail": {
+  "id": "9667f31d-e52c-4836-84cb-35dcdbd6d1ec",
+  "company_id": "ba21d016-1ac1-48c9-812b-924e28e44dd2",
+  "company_name": "Contract Fishing AS",
+  "position": "AB",
+  "status": "sent",
+  "vacancy_id": null,
+  "contact_id": null,
+  "contact_name": null,
+  "profile_id": null,
+  "notes": null,
+  "sent_at": "2026-11-10T10:07:22.790235Z",
+  "last_reply_at": null,
+  "next_follow_up_at": "2026-11-17T10:07:22.790244Z",
+  "created_at": "2026-11-10T10:07:22.754508Z",
+  "updated_at": "2026-11-10T10:07:22.787748Z",
+  "history": [
+   {
+    "id": "3ecf893a-d49f-477c-8a52-d701bd71391f",
+    "from_status": "discovered",
+    "to_status": "sent",
+    "note": "CV sent",
+    "changed_at": "2026-11-10T10:07:22.787748Z"
+   },
+   {
+    "id": "be520699-5c47-4b54-bc3f-40f53220a1fc",
+    "from_status": null,
+    "to_status": "discovered",
+    "note": "Created",
+    "changed_at": "2026-11-10T10:07:22.754508Z"
+   }
+  ],
+  "follow_ups": [
+   {
+    "id": "88338230-2feb-4777-bb4a-899742da80d7",
+    "title": "Follow up on application",
+    "due_at": "2026-11-17T10:07:22.790244Z",
+    "completed_at": null,
+    "application_id": "9667f31d-e52c-4836-84cb-35dcdbd6d1ec",
+    "company_id": "ba21d016-1ac1-48c9-812b-924e28e44dd2",
+    "company_name": "Contract Fishing AS",
+    "overdue": false
+   }
+  ]
+ },
+ "board": [
+  {
+   "status": "discovered",
+   "applications": []
+  },
+  {
+   "status": "researched",
+   "applications": []
+  },
+  {
+   "status": "ready_to_contact",
+   "applications": []
+  },
+  {
+   "status": "draft_created",
+   "applications": []
+  },
+  {
+   "status": "sent",
+   "applications": [
+    {
+     "id": "9667f31d-e52c-4836-84cb-35dcdbd6d1ec",
+     "company_id": "ba21d016-1ac1-48c9-812b-924e28e44dd2",
+     "company_name": "Contract Fishing AS",
+     "position": "AB",
+     "status": "sent",
+     "vacancy_id": null,
+     "contact_id": null,
+     "contact_name": null,
+     "profile_id": null,
+     "notes": null,
+     "sent_at": "2026-11-10T10:07:22.790235Z",
+     "last_reply_at": null,
+     "next_follow_up_at": "2026-11-17T10:07:22.790244Z",
+     "created_at": "2026-11-10T10:07:22.754508Z",
+     "updated_at": "2026-11-10T10:07:22.787748Z"
+    }
+   ]
+  },
+  {
+   "status": "waiting_for_reply",
+   "applications": []
+  },
+  {
+   "status": "follow_up_needed",
+   "applications": []
+  },
+  {
+   "status": "replied",
+   "applications": []
+  },
+  {
+   "status": "interview",
+   "applications": []
+  },
+  {
+   "status": "offer",
+   "applications": []
+  },
+  {
+   "status": "hired",
+   "applications": []
+  },
+  {
+   "status": "rejected",
+   "applications": []
+  },
+  {
+   "status": "no_vacancies",
+   "applications": []
+  },
+  {
+   "status": "keep_in_touch",
+   "applications": []
+  }
+ ],
+ "stats": {
+  "total": 1,
+  "by_status": {
+   "discovered": 0,
+   "researched": 0,
+   "ready_to_contact": 0,
+   "draft_created": 0,
+   "sent": 1,
+   "waiting_for_reply": 0,
+   "follow_up_needed": 0,
+   "replied": 0,
+   "interview": 0,
+   "offer": 0,
+   "hired": 0,
+   "rejected": 0,
+   "no_vacancies": 0,
+   "keep_in_touch": 0
+  },
+  "sent": 1,
+  "replied": 0,
+  "reply_rate": 0.0,
+  "interviews": 0,
+  "offers": 0,
+  "hired": 0,
+  "open_follow_ups": 1,
+  "overdue_follow_ups": 0,
+  "median_days_to_reply": null
+ },
+ "follow_ups": [
+  {
+   "id": "88338230-2feb-4777-bb4a-899742da80d7",
+   "title": "Follow up on application",
+   "due_at": "2026-11-17T10:07:22.790244Z",
+   "completed_at": null,
+   "application_id": "9667f31d-e52c-4836-84cb-35dcdbd6d1ec",
+   "company_id": "ba21d016-1ac1-48c9-812b-924e28e44dd2",
+   "company_name": "Contract Fishing AS",
+   "overdue": false
+  }
+ ],
+ "timeline": [
+  {
+   "at": "2026-11-10T10:07:22.787748Z",
+   "kind": "status_changed",
+   "title": "sent",
+   "detail": "CV sent",
+   "application_id": "9667f31d-e52c-4836-84cb-35dcdbd6d1ec"
+  },
+  {
+   "at": "2026-11-10T10:07:22.787748Z",
+   "kind": "follow_up_created",
+   "title": "Follow up on application",
+   "detail": "2026-11-17T10:07:22.790244+00:00",
+   "application_id": "9667f31d-e52c-4836-84cb-35dcdbd6d1ec"
+  },
+  {
+   "at": "2026-11-10T10:07:22.754508Z",
+   "kind": "application_created",
+   "title": "AB",
+   "detail": null,
+   "application_id": "9667f31d-e52c-4836-84cb-35dcdbd6d1ec"
+  },
+  {
+   "at": "2026-11-10T10:07:22.602745Z",
+   "kind": "contact_added",
+   "title": "crew@contract.example",
+   "detail": null,
+   "application_id": null
+  },
+  {
+   "at": "2026-11-10T10:07:22.574725Z",
+   "kind": "note",
+   "title": "Note",
+   "detail": null,
+   "application_id": null
+  },
+  {
+   "at": "2026-11-10T10:07:22.523839Z",
+   "kind": "company_added",
+   "title": "Contract Fishing AS",
+   "detail": null,
+   "application_id": null
+  }
+ ],
+ "me": {
+  "id": "fc83b84a-b85d-4f34-9917-cbc63851daf5",
+  "email": "sailor@example.com",
+  "display_name": null,
+  "locale": "en",
+  "consent_analytics": false,
+  "created_at": "2026-11-10T10:07:22.510550Z"
  }
 }

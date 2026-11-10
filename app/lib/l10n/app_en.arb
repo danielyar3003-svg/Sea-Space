@@ -1,0 +1,560 @@
+{
+  "@@locale": "en",
+  "appTagline": "Maritime Career Intelligence",
+  "cancel": "Cancel",
+  "save": "Save",
+  "add": "Add",
+  "delete": "Delete",
+  "edit": "Edit",
+  "verify": "Verify",
+  "required": "Required",
+  "unknown": "Unknown",
+  "notSet": "Not set",
+  "all": "All",
+  "tryAgain": "Try again",
+  "somethingWentWrong": "Something went wrong",
+  "errorNetwork": "No connection to the server. Check your network.",
+  "errorTimeout": "The server took too long to respond.",
+  "errorRateLimited": "Too many requests. Wait a moment and try again.",
+  "errorServer": "The server could not complete the request.",
+  "errorSessionExpired": "Your session has ended. Sign in again.",
+  "couldNotSave": "Could not save: {error}",
+  "@couldNotSave": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "invalidUrl": "Enter a full link starting with https://",
+  "invalidEmail": "Not an e-mail address",
+  "twoLetters": "2 letters",
+  "sourceLabel": "Source: {url}",
+  "@sourceLabel": {
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "demoBanner": "DEMO MODE — no server · sign in with any e-mail · data is kept only in this tab",
+  "comingInPhase": "Coming in Phase {phase}",
+  "@comingInPhase": {
+    "placeholders": {
+      "phase": {
+        "type": "int"
+      }
+    }
+  },
+  "notYetAvailable": "NOT YET AVAILABLE",
+  "notFound": "Not found",
+  "navHome": "Home",
+  "navDiscover": "Discover",
+  "navCompanies": "Companies",
+  "navMail": "Mail",
+  "navProfile": "Profile",
+  "settings": "Settings",
+  "tools": "Tools",
+  "language": "Language",
+  "languageSystem": "System default",
+  "email": "E-mail",
+  "password": "Password",
+  "signIn": "Sign in",
+  "signOut": "Sign out",
+  "createAccount": "Create account",
+  "haveAccountSignIn": "Already have an account? Sign in",
+  "newCreateAccount": "New to SEA SPACE? Create an account",
+  "forgotPassword": "Forgot password?",
+  "enterValidEmail": "Enter a valid e-mail",
+  "passwordMin8": "At least 8 characters",
+  "enterPassword": "Enter your password",
+  "confirmEmailSent": "Check your inbox to confirm your e-mail, then sign in.",
+  "enterEmailFirst": "Enter your e-mail first.",
+  "resetSent": "If an account exists, a reset link has been sent.",
+  "authUnavailable": "Could not reach the authentication service.",
+  "authNotConfigured": "Authentication is not configured",
+  "authNotConfiguredBody": "This build has no Supabase project settings, so sign-in is unavailable. Rebuild the app with:",
+  "statCompanies": "Companies",
+  "statVerifiedContacts": "Verified HR contacts",
+  "statApplicationsSent": "Applications sent",
+  "statReplies": "Replies",
+  "statPendingFollowUps": "Pending follow-ups",
+  "statInterviews": "Interviews",
+  "statOffers": "Offers",
+  "startWithProfile": "Start with your profile",
+  "startWithProfileBody": "Your experience and target positions drive company research and outreach.",
+  "upcomingFollowUps": "Upcoming follow-ups",
+  "noFollowUps": "No follow-ups scheduled.",
+  "newCompanies": "New companies",
+  "noCompaniesShort": "No companies yet.",
+  "recentActivity": "Recent activity",
+  "activityEmpty": "Your activity will appear here.",
+  "profile": "Profile",
+  "editProfile": "Edit profile",
+  "newProfile": "New profile",
+  "createProfileTitle": "Create your maritime profile",
+  "createProfileBody": "Start from the suggested profile (you can change everything before saving), or start from a blank form.",
+  "reviewSuggestedProfile": "Review suggested profile",
+  "startBlank": "Start blank",
+  "prefilledNotice": "Pre-filled from your brief. Check every field — nothing is saved until you tap Save. Certificates and dates are left empty on purpose.",
+  "profileName": "Profile name",
+  "profileNameHint": "e.g. \"Trawl Deckhand\"",
+  "fullName": "Full name",
+  "nameNotSet": "Name not set",
+  "nationality": "Nationality",
+  "englishLevel": "English level",
+  "english": "English",
+  "yearsAtSea": "Years at sea",
+  "yearsRange": "Enter a number between 0 and 70",
+  "approximate": "Approximate",
+  "seaExperience": "Sea experience",
+  "yearsValue": "{approx}{years} years",
+  "@yearsValue": {
+    "placeholders": {
+      "approx": {
+        "type": "String"
+      },
+      "years": {
+        "type": "String"
+      }
+    }
+  },
+  "targetPositions": "Target positions",
+  "noTargetPositions": "No target positions yet.",
+  "addPosition": "Add position",
+  "experienceAreas": "Experience areas",
+  "noExperienceAreas": "No experience areas yet.",
+  "addArea": "Add area",
+  "summary": "Summary",
+  "summaryHint": "Short professional summary",
+  "alsoAddVessel": "Also add vessel: {vessel}",
+  "@alsoAddVessel": {
+    "placeholders": {
+      "vessel": {
+        "type": "String"
+      }
+    }
+  },
+  "withoutDates": "Without dates — add them later if you have them.",
+  "primary": "PRIMARY",
+  "seaService": "Sea service",
+  "noVesselsAdded": "No vessels added yet.",
+  "vesselNotNamed": "Vessel not named",
+  "datesNotProvided": "Dates not provided",
+  "present": "present",
+  "deleteEntry": "Delete this entry?",
+  "experienceEntry": "Experience entry",
+  "addSeaService": "Add sea service",
+  "editSeaService": "Edit sea service",
+  "vesselName": "Vessel name",
+  "vesselType": "Vessel type",
+  "position": "Position",
+  "employer": "Employer",
+  "duties": "Duties (comma separated)",
+  "startDate": "Start date",
+  "endDate": "End date",
+  "clearDates": "Clear dates",
+  "endBeforeStart": "End date is before start date.",
+  "englishBeginner": "Beginner",
+  "englishElementary": "Elementary",
+  "englishIntermediate": "Intermediate",
+  "englishUpperIntermediate": "Upper-intermediate",
+  "englishAdvanced": "Advanced",
+  "englishFluent": "Fluent",
+  "account": "Account",
+  "signedIn": "Signed in",
+  "server": "Server",
+  "serverUnreachable": "Server unreachable",
+  "apiConnected": "API connected",
+  "configured": "CONFIGURED",
+  "notConfigured": "NOT CONFIGURED",
+  "integrationSupabase": "Supabase authentication",
+  "integrationEncryption": "Token encryption key",
+  "integrationAnthropic": "Claude API (AI assistant)",
+  "integrationGmail": "Gmail OAuth",
+  "integrationPubsub": "Gmail push notifications (Pub/Sub)",
+  "integrationSearch": "Web search (Brave)",
+  "privacy": "Privacy",
+  "deleteAccount": "Delete account",
+  "deleteAccountSubtitle": "Permanently removes your SEA SPACE data",
+  "deleteAccountTitle": "Delete account permanently?",
+  "deleteAccountBody": "All your profiles, companies, applications and other data in SEA SPACE will be deleted. This cannot be undone.",
+  "addCompany": "Add company",
+  "searchCompanies": "Search companies",
+  "duplicatesToReview": "{count, plural, one{{count} possible duplicate to review} other{{count} possible duplicates to review}}",
+  "@duplicatesToReview": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "contactsCount": "{count, plural, one{{count} contact} other{{count} contacts}}",
+  "@contactsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "openVacanciesCount": "{count, plural, one{{count} open vacancy} other{{count} open vacancies}}",
+  "@openVacanciesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noCompaniesMatch": "No companies match this filter",
+  "noCompaniesYet": "No companies yet",
+  "noCompaniesBody": "Add an employer yourself, or start from the research targets in Discover.",
+  "openDiscover": "Open Discover",
+  "newCompany": "New company",
+  "editCompany": "Edit company",
+  "companyNameRequired": "Company name *",
+  "companyName": "Company name",
+  "country": "Country",
+  "countryTwoLetters": "Country (2 letters)",
+  "headquarters": "Headquarters",
+  "hiringStatus": "Hiring status",
+  "industry": "Industry",
+  "recruitment": "Recruitment",
+  "officialWebsite": "Official website",
+  "careersPage": "Careers page",
+  "recruitmentEmail": "Recruitment e-mail",
+  "recruitmentEmailHelper": "Only an address published by the company",
+  "speculativePolicy": "Speculative application policy",
+  "speculativeShort": "Speculative",
+  "fleetAndNotes": "Fleet & notes",
+  "fleetSummary": "Fleet summary",
+  "description": "Description",
+  "duplicateTitle": "This company may already exist",
+  "duplicateSameNameCountry": "A company with the same name and country is already saved.",
+  "createAnyway": "Create anyway",
+  "usingSavedCompany": "Using the saved company \"{name}\"",
+  "@usingSavedCompany": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "markVerified": "Mark as verified",
+  "markVerifiedMenu": "Mark as verified…",
+  "verifiedPageLabel": "Page where you checked these details",
+  "markedVerified": "Marked as verified",
+  "deleteCompanyTitle": "Delete {name}?",
+  "@deleteCompanyTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteCompanyBody": "The company is removed from your list.",
+  "researchWebsite": "Research website",
+  "researchCompanyWebsite": "Research company website",
+  "companyWebsite": "Company website",
+  "research": "Research",
+  "mergeInto": "Merge {name} into…",
+  "@mergeInto": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mergeMenu": "Merge into another company…",
+  "noOtherCompanies": "No other companies.",
+  "mergeConfirmTitle": "Merge into {name}?",
+  "@mergeConfirmTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mergeConfirmBody": "Contacts, notes, sources, vacancies and vessel links move to {target}. {source} is then hidden.",
+  "@mergeConfirmBody": {
+    "placeholders": {
+      "target": {
+        "type": "String"
+      },
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "merge": "Merge",
+  "verifiedOn": "Verified on",
+  "source": "Source",
+  "hrContacts": "HR contacts",
+  "noContactsYet": "No contacts yet.",
+  "fleet": "Fleet",
+  "noVesselsLinked": "No vessels linked. Add them under Tools → Fleet.",
+  "owner": "Owner",
+  "operator": "Operator",
+  "operatorCrewing": "Operator · crewing employer: {value}",
+  "@operatorCrewing": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "yes": "yes",
+  "no": "no",
+  "unknownLower": "unknown",
+  "notes": "Notes",
+  "addNote": "Add note",
+  "note": "Note",
+  "noNotes": "No notes.",
+  "deleteNote": "Delete note",
+  "websitesSources": "Websites & sources",
+  "noSources": "No sources recorded.",
+  "hiringActive": "Actively hiring",
+  "hiringNone": "No current vacancies",
+  "hiringSpeculative": "Speculative applications accepted",
+  "hiringAgency": "Recruitment agency",
+  "hiringUnknown": "Unknown hiring status",
+  "industryFishing": "Fishing",
+  "industryTrawling": "Trawling",
+  "industryKrill": "Krill",
+  "industrySeafood": "Seafood processing",
+  "industryFactory": "Factory vessels",
+  "industryAgency": "Recruitment agency",
+  "industryShipManagement": "Ship management",
+  "industryOther": "Other",
+  "verVerified": "Verified",
+  "verUnverified": "Unverified",
+  "verInferred": "Inferred",
+  "verUserProvided": "Entered by you",
+  "addContact": "Add contact",
+  "genericInbox": "Generic recruitment inbox",
+  "genericInboxHint": "e.g. jobs@, crew@ — not a named person",
+  "jobTitle": "Job title",
+  "emailOrigin": "Where is this address from?",
+  "emailPublishedVerified": "Published · verified",
+  "emailPublishedUnverified": "Published · not yet verified",
+  "emailGuessed": "Guessed (not published)",
+  "emailEnteredByYou": "Entered by you",
+  "sourcePage": "Source page",
+  "guessedWarning": "Guessed addresses are kept separate and can never be marked verified.",
+  "enterNameOrEmail": "Enter a name or an e-mail address",
+  "addSourceLink": "Add the link of the page where the address is published",
+  "guessedEmailBadge": "GUESSED E-MAIL",
+  "differentDomainBadge": "DIFFERENT DOMAIN",
+  "verifyContact": "Verify contact",
+  "contactPublishedPage": "Page where this contact is published",
+  "deleteContactTitle": "Delete contact?",
+  "recruitmentInbox": "Recruitment inbox",
+  "unnamedContact": "Unnamed contact",
+  "contactsTitle": "HR Contacts",
+  "filterVerified": "Verified",
+  "filterUnverified": "Unverified",
+  "filterInboxes": "Recruitment inboxes",
+  "filterPeople": "People",
+  "filterGuessed": "Guessed e-mails",
+  "noContactsHere": "No contacts here",
+  "noContactsHereBody": "Contacts are added on a company page, or imported from website research.",
+  "findingWebsite": "Website",
+  "findingEmails": "E-mail addresses",
+  "findingCareers": "Careers pages",
+  "findingContacts": "Contact pages",
+  "findingSpeculative": "Speculative applications",
+  "findingPositions": "Positions mentioned (keywords, not vacancies)",
+  "websiteResearch": "Website research",
+  "readingWebsite": "Reading the website…",
+  "readingWebsiteBody": "Only public pages allowed by robots.txt are read, one request at a time.",
+  "researchFailed": "Research failed",
+  "pagesReadNotice": "{count, plural, one{Read {count} page.} other{Read {count} pages.}} Import only what you have checked; imported data stays \"unverified\" until you verify it.",
+  "@pagesReadNotice": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "nothingFound": "Nothing relevant was found on these pages.",
+  "skippedPages": "Skipped pages",
+  "limitations": "Limitations",
+  "hintRecruitmentInbox": "Recruitment inbox",
+  "hintGenericInbox": "Generic inbox",
+  "hintDifferentDomain": "Different domain from the website",
+  "hintExternalPortal": "External job portal",
+  "import": "Import",
+  "tabEmployers": "Employers",
+  "tabVacancies": "Vacancies",
+  "researchEmployerTitle": "Research an employer website",
+  "researchEmployerBody": "Reads the company's own public pages for recruitment e-mails, careers pages and open-application policies. Works even when no vacancy is advertised.",
+  "researchAWebsite": "Research a website",
+  "researchTargets": "Research targets from your brief",
+  "addAll": "Add all",
+  "notInCompanies": "Not in your companies yet",
+  "inCompanies": "In your companies",
+  "targetsNotice": "Only the names come from your brief. Country, website and hiring status stay empty until you research them. This is a starting list, not the whole market.",
+  "webSearch": "Web search",
+  "searchHint": "e.g. krill trawler crew Norway",
+  "noResults": "No results.",
+  "snippetsWarning": "Search snippets are leads only — open the page and check it.",
+  "enterCompanyName": "Enter the company name",
+  "addVacancy": "Add vacancy",
+  "vacActive": "Active",
+  "vacUnverified": "Unverified",
+  "vacExpired": "Expired",
+  "vacStatusActive": "ACTIVE",
+  "vacStatusUnverified": "UNVERIFIED",
+  "vacStatusExpired": "EXPIRED",
+  "noVacancies": "No vacancies saved",
+  "noVacanciesBody": "Add a vacancy with the link to its posting. It stays \"unverified\" until you confirm the posting is still open.",
+  "deadline": "Deadline {date}",
+  "@deadline": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "checkedStillOpen": "I checked: still open",
+  "markExpired": "Mark as expired",
+  "employerPositionRequired": "Employer and position are required",
+  "postingLinkError": "Link to the posting: {error}",
+  "@postingLinkError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "positionRequired": "Position *",
+  "employerRequired": "Employer *",
+  "postingLinkRequired": "Link to the posting *",
+  "rotation": "Rotation",
+  "addVessel": "Add vessel",
+  "noVesselsYet": "No vessels yet",
+  "noVesselsBody": "Add vessels and link their owner and operator. The operator is often, but not always, the company that hires the crew.",
+  "imo": "IMO",
+  "flag": "Flag",
+  "type": "Type",
+  "typicalPositions": "Typical positions",
+  "linkOwnerOperator": "Link owner / operator",
+  "addCompanyFirst": "Add the company first under Companies.",
+  "vesselNameRequired": "Vessel name is required",
+  "imoInvalid": "IMO number is not valid (7 digits with a check digit)",
+  "vesselNameStar": "Vessel name *",
+  "imoNumber": "IMO number",
+  "flagTwoLetters": "Flag (2 letters)",
+  "registrySource": "Source (registry page)",
+  "linkCompany": "Link company",
+  "company": "Company",
+  "link": "Link",
+  "possibleDuplicates": "Possible duplicates",
+  "noDuplicates": "No duplicates found",
+  "duplicatesHelp": "Open the one to remove and choose \"Merge into another company\".",
+  "featCrm": "CRM Pipeline",
+  "featCrmDesc": "Kanban board of applications from Discovered to Hired, with timelines and follow-ups.",
+  "featContacts": "HR Contacts",
+  "featContactsDesc": "Publicly listed crewing and recruitment contacts, with source and verification date.",
+  "featFleet": "Fleet",
+  "featFleetDesc": "Vessels linked to their owners and operators — which are not always the employer.",
+  "featAssistant": "AI Assistant",
+  "featAssistantDesc": "Cover letters, replies, translations (EN / UK / RU). Nothing is sent without your approval.",
+  "featDocuments": "Documents",
+  "featDocumentsDesc": "Private vault for CVs, Seaman's Book, STCW, medicals — with expiry reminders.",
+  "featSalaries": "Salary Database",
+  "featSalariesDesc": "Compare offers and reported salaries, normalised to the same pay period.",
+  "featMap": "Recruitment Map",
+  "featMapDesc": "Employers, crewing offices and ports on a map.",
+  "featInterview": "Interview Trainer",
+  "featInterviewDesc": "Practise maritime interviews in English with feedback.",
+  "featSafety": "Scam Detector",
+  "featSafetyDesc": "Checks domains, payment requests and suspicious offers, with evidence.",
+  "featAnalytics": "Analytics",
+  "featAnalyticsDesc": "Response rates and pipeline statistics from your own data.",
+  "discoverDesc": "Find maritime employers, recruitment contacts and vacancies — including companies with no advertised openings.",
+  "mailDesc": "Gmail inbox linked to companies and applications. Every outgoing e-mail needs your explicit approval.",
+  "crm": "Applications",
+  "board": "Board",
+  "followUps": "Follow-ups",
+  "stDiscovered": "Discovered",
+  "stResearched": "Researched",
+  "stReadyToContact": "Ready to contact",
+  "stDraftCreated": "Draft created",
+  "stSent": "Sent",
+  "stWaitingForReply": "Waiting for reply",
+  "stFollowUpNeeded": "Follow-up needed",
+  "stReplied": "Replied",
+  "stInterview": "Interview",
+  "stOffer": "Offer",
+  "stHired": "Hired",
+  "stRejected": "Rejected",
+  "stNoVacancies": "No vacancies",
+  "stKeepInTouch": "Keep in touch",
+  "trackApplication": "Track application",
+  "applications": "Applications",
+  "noApplications": "No applications yet",
+  "noApplicationsBody": "Open a company and choose \"Track application\" to start your pipeline.",
+  "noApplicationsForCompany": "No applications for this company.",
+  "changeStatus": "Change status",
+  "status": "Status",
+  "statusNote": "Note for the history (optional)",
+  "remindInDays": "Remind me to follow up in (days)",
+  "noReminder": "No reminder",
+  "history": "History",
+  "created": "Created",
+  "addFollowUp": "Add follow-up",
+  "followUpTitle": "What to do",
+  "followUpDefaultTitle": "Follow up on application",
+  "dueDate": "Due date",
+  "overdue": "OVERDUE",
+  "done": "Done",
+  "markDone": "Mark as done",
+  "reopen": "Reopen",
+  "followUpsOpen": "Open",
+  "followUpsOverdue": "Overdue",
+  "followUpsDone": "Done",
+  "noFollowUpsHere": "No follow-ups here",
+  "nextFollowUp": "Next follow-up {date}",
+  "@nextFollowUp": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "sentOn": "Sent {date}",
+  "@sentOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteApplication": "Delete application?",
+  "openCompany": "Open company",
+  "timeline": "Timeline",
+  "noTimeline": "Nothing has happened yet.",
+  "tlCompanyAdded": "Company added",
+  "tlNote": "Note",
+  "tlContactAdded": "Contact added",
+  "tlApplicationCreated": "Application started",
+  "tlStatusChanged": "Status changed",
+  "tlFollowUpCreated": "Follow-up scheduled",
+  "tlFollowUpDone": "Follow-up done",
+  "tlVacancyAdded": "Vacancy added",
+  "tlSourceAdded": "Source added",
+  "statTotal": "Total",
+  "statReplyRate": "Reply rate",
+  "statMedianReply": "Median reply time",
+  "daysValue": "{days} d",
+  "@daysValue": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "notEnoughData": "—",
+  "contact": "Contact",
+  "noContact": "No contact"
+}

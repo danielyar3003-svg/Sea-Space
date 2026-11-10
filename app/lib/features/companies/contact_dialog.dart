@@ -6,12 +6,13 @@ import '../../core/widgets/widgets.dart';
 import 'company_models.dart';
 import 'company_repository.dart';
 import 'company_widgets.dart';
+import '../../core/l10n.dart';
 
-const emailStatusLabels = {
-  'public_verified': 'Published · verified',
-  'public_unverified': 'Published · not yet verified',
-  'inferred': 'Guessed (not published)',
-  'user_provided': 'Entered by you',
+Map<String, String> emailStatusLabels(BuildContext context) => {
+  'public_verified': context.l10n.emailPublishedVerified,
+  'public_unverified': context.l10n.emailPublishedUnverified,
+  'inferred': context.l10n.emailGuessed,
+  'user_provided': context.l10n.emailEnteredByYou,
 };
 
 /// Add a contact. The user states where the address comes from; a guessed address is
@@ -45,16 +46,16 @@ class _ContactDialogState extends State<ContactDialog> {
   void _save() {
     final email = _t(_email);
     if (_t(_name) == null && email == null) {
-      setState(() => _error = 'Enter a name or an e-mail address');
+      setState(() => _error = context.l10n.enterNameOrEmail);
       return;
     }
     if (email != null && !RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email)) {
-      setState(() => _error = 'Not an e-mail address');
+      setState(() => _error = context.l10n.invalidEmail);
       return;
     }
     final src = _t(_source);
-    if (_origin == 'public_unverified' && (src == null || validateUrl(src) != null)) {
-      setState(() => _error = 'Add the link of the page where the address is published');
+    if (_origin == 'public_unverified' && (src == null || validateUrl(context, src) != null)) {
+      setState(() => _error = context.l10n.addSourceLink);
       return;
     }
     Navigator.pop(context, {
@@ -70,7 +71,7 @@ class _ContactDialogState extends State<ContactDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add contact'),
+      title: Text(context.l10n.addContact),
       content: SizedBox(
         width: 440,
         child: SingleChildScrollView(
@@ -79,36 +80,36 @@ class _ContactDialogState extends State<ContactDialog> {
             children: [
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Generic recruitment inbox'),
-                subtitle: const Text('e.g. jobs@, crew@ — not a named person'),
+                title: Text(context.l10n.genericInbox),
+                subtitle: Text(context.l10n.genericInboxHint),
                 value: _generic,
                 onChanged: (v) => setState(() => _generic = v),
               ),
               if (!_generic) ...[
                 TextField(
                   controller: _name,
-                  decoration: const InputDecoration(labelText: 'Full name'),
+                  decoration: InputDecoration(labelText: context.l10n.fullName),
                 ),
                 const SizedBox(height: SsSpace.md),
                 TextField(
                   controller: _title,
-                  decoration: const InputDecoration(labelText: 'Job title', hintText: 'Crewing Manager'),
+                  decoration: InputDecoration(labelText: context.l10n.jobTitle, hintText: 'Crewing Manager'),
                 ),
                 const SizedBox(height: SsSpace.md),
               ],
               TextField(
                 controller: _email,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(labelText: 'E-mail'),
+                decoration: InputDecoration(labelText: context.l10n.email),
               ),
               const SizedBox(height: SsSpace.md),
               DropdownButtonFormField<String>(
                 isExpanded: true,
                 initialValue: _origin,
-                decoration: const InputDecoration(labelText: 'Where is this address from?'),
+                decoration: InputDecoration(labelText: context.l10n.emailOrigin),
                 items: [
                   for (final k in ['public_unverified', 'user_provided', 'inferred'])
-                    DropdownMenuItem(value: k, child: Text(emailStatusLabels[k]!)),
+                    DropdownMenuItem(value: k, child: Text(emailStatusLabels(context)[k]!)),
                 ],
                 onChanged: (v) => setState(() => _origin = v ?? 'user_provided'),
               ),
@@ -116,15 +117,12 @@ class _ContactDialogState extends State<ContactDialog> {
               TextField(
                 controller: _source,
                 keyboardType: TextInputType.url,
-                decoration: const InputDecoration(labelText: 'Source page', hintText: 'https://'),
+                decoration: InputDecoration(labelText: context.l10n.sourcePage, hintText: 'https://'),
               ),
               if (_origin == 'inferred')
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(top: SsSpace.sm),
-                  child: Text(
-                    'Guessed addresses are kept separate and can never be marked verified.',
-                    style: TextStyle(color: SsColors.warning),
-                  ),
+                  child: Text(context.l10n.guessedWarning, style: TextStyle(color: SsColors.warning)),
                 ),
               if (_error != null)
                 Padding(
@@ -136,8 +134,8 @@ class _ContactDialogState extends State<ContactDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-        FilledButton(onPressed: _save, child: const Text('Add')),
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.cancel)),
+        FilledButton(onPressed: _save, child: Text(context.l10n.add)),
       ],
     );
   }
@@ -178,7 +176,10 @@ class ContactCard extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SelectableText(c.fullName ?? c.email ?? c.displayName, style: theme.textTheme.titleSmall),
+                SelectableText(
+                  c.fullName ?? c.email ?? c.displayName(context.l10n),
+                  style: theme.textTheme.titleSmall,
+                ),
                 for (final l in lines) Text(l, style: theme.textTheme.bodySmall),
                 const SizedBox(height: SsSpace.sm),
                 Wrap(
@@ -186,14 +187,15 @@ class ContactCard extends ConsumerWidget {
                   runSpacing: SsSpace.xs,
                   children: [
                     VerificationBadge(c.provenance),
-                    if (c.emailStatus == 'inferred') const SsBadge('GUESSED E-MAIL', color: SsColors.warning),
+                    if (c.emailStatus == 'inferred')
+                      SsBadge(context.l10n.guessedEmailBadge, color: SsColors.warning),
                     if (c.domainMatchesCompany == false)
-                      const SsBadge('DIFFERENT DOMAIN', color: SsColors.warning),
+                      SsBadge(context.l10n.differentDomainBadge, color: SsColors.warning),
                   ],
                 ),
                 if (c.provenance.sourceUrl != null) ...[
                   const SizedBox(height: SsSpace.xs),
-                  Text('Source: ${c.provenance.sourceUrl}', style: theme.textTheme.bodySmall),
+                  Text(context.l10n.sourceLabel(c.provenance.sourceUrl!), style: theme.textTheme.bodySmall),
                 ],
               ],
             ),
@@ -204,17 +206,22 @@ class ContactCard extends ConsumerWidget {
                 if (a == 'verify') {
                   final url = await textInputDialog(
                     context,
-                    title: 'Verify contact',
-                    label: 'Page where this contact is published',
+                    title: context.l10n.verifyContact,
+                    label: context.l10n.contactPublishedPage,
                     hint: 'https://',
                     initial: c.provenance.sourceUrl,
-                    action: 'Verify',
-                    validator: validateUrl,
+                    action: context.l10n.verify,
+                    validator: (v) => validateUrl(context, v),
                   );
                   if (url == null) return;
                   await repo.verifyContact(c.id, url);
                 } else if (a == 'delete') {
-                  if (!context.mounted || !await confirmDialog(context, 'Delete contact?', c.displayName)) {
+                  if (!context.mounted ||
+                      !await confirmDialog(
+                        context,
+                        context.l10n.deleteContactTitle,
+                        c.displayName(context.l10n),
+                      )) {
                     return;
                   }
                   await repo.deleteContact(c.id);
@@ -226,8 +233,8 @@ class ContactCard extends ConsumerWidget {
             },
             itemBuilder: (_) => [
               if (!c.provenance.isVerified && c.emailStatus != 'inferred')
-                const PopupMenuItem(value: 'verify', child: Text('Mark as verified…')),
-              const PopupMenuItem(value: 'delete', child: Text('Delete')),
+                PopupMenuItem(value: 'verify', child: Text(context.l10n.markVerifiedMenu)),
+              PopupMenuItem(value: 'delete', child: Text(context.l10n.delete)),
             ],
           ),
         ],

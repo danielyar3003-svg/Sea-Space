@@ -4,11 +4,16 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/theme/tokens.dart';
 import '../../core/widgets/widgets.dart';
+import '../crm/crm_models.dart';
+import '../crm/crm_repository.dart';
+import '../crm/crm_widgets.dart';
+import '../profile/profile_repository.dart';
 import 'company_models.dart';
 import 'company_repository.dart';
 import 'company_widgets.dart';
 import 'contact_dialog.dart';
 import 'research_sheet.dart';
+import '../../core/l10n.dart';
 
 class CompanyDetailScreen extends ConsumerWidget {
   const CompanyDetailScreen({super.key, required this.companyId});
@@ -59,14 +64,14 @@ class _CompanyView extends ConsumerWidget {
       case _Action.verify:
         final url = await textInputDialog(
           context,
-          title: 'Mark as verified',
-          label: 'Page where you checked these details',
+          title: context.l10n.markVerified,
+          label: context.l10n.verifiedPageLabel,
           hint: 'https://',
-          action: 'Verify',
-          validator: validateUrl,
+          action: context.l10n.verify,
+          validator: (v) => validateUrl(context, v),
         );
         if (url != null && context.mounted) {
-          await _run(context, ref, () => repo.verify(_id, url), done: 'Marked as verified');
+          await _run(context, ref, () => repo.verify(_id, url), done: context.l10n.markedVerified);
         }
       case _Action.research:
         await _research(context);
@@ -75,8 +80,8 @@ class _CompanyView extends ConsumerWidget {
       case _Action.delete:
         if (await confirmDialog(
               context,
-              'Delete ${company.name}?',
-              'The company is removed from your list.',
+              context.l10n.deleteCompanyTitle(company.name),
+              context.l10n.deleteCompanyBody,
             ) &&
             context.mounted) {
           await _run(context, ref, () => repo.delete(_id));
@@ -90,12 +95,12 @@ class _CompanyView extends ConsumerWidget {
     String? url = known.isEmpty ? null : known.first;
     url = await textInputDialog(
       context,
-      title: 'Research website',
-      label: 'Company website',
+      title: context.l10n.researchWebsite,
+      label: context.l10n.companyWebsite,
       hint: 'https://',
       initial: url,
-      action: 'Research',
-      validator: validateUrl,
+      action: context.l10n.research,
+      validator: (v) => validateUrl(context, v),
     );
     if (url == null || !context.mounted) return;
     await showResearchSheet(context, url: url, companyId: _id, companyName: company.name);
@@ -109,10 +114,10 @@ class _CompanyView extends ConsumerWidget {
     final target = await showDialog<CompanySummary>(
       context: context,
       builder: (ctx) => SimpleDialog(
-        title: Text('Merge ${company.name} into…'),
+        title: Text(context.l10n.mergeInto(company.name)),
         children: [
           if (others.isEmpty)
-            const Padding(padding: EdgeInsets.all(SsSpace.lg), child: Text('No other companies.')),
+            Padding(padding: EdgeInsets.all(SsSpace.lg), child: Text(context.l10n.noOtherCompanies)),
           for (final o in others)
             SimpleDialogOption(
               onPressed: () => Navigator.pop(ctx, o),
@@ -124,10 +129,9 @@ class _CompanyView extends ConsumerWidget {
     if (target == null || !context.mounted) return;
     if (!await confirmDialog(
       context,
-      'Merge into ${target.name}?',
-      'Contacts, notes, sources, vacancies and vessel links move to ${target.name}. '
-          '${company.name} is then hidden.',
-      action: 'Merge',
+      context.l10n.mergeConfirmTitle(target.name),
+      context.l10n.mergeConfirmBody(target.name, company.name),
+      action: context.l10n.merge,
     )) {
       return;
     }
@@ -149,12 +153,12 @@ class _CompanyView extends ConsumerWidget {
         actions: [
           PopupMenuButton<_Action>(
             onSelected: (a) => _onAction(context, ref, a),
-            itemBuilder: (_) => const [
-              PopupMenuItem(value: _Action.edit, child: Text('Edit')),
-              PopupMenuItem(value: _Action.research, child: Text('Research website')),
-              PopupMenuItem(value: _Action.verify, child: Text('Mark as verified…')),
-              PopupMenuItem(value: _Action.merge, child: Text('Merge into another company…')),
-              PopupMenuItem(value: _Action.delete, child: Text('Delete')),
+            itemBuilder: (_) => [
+              PopupMenuItem(value: _Action.edit, child: Text(context.l10n.edit)),
+              PopupMenuItem(value: _Action.research, child: Text(context.l10n.researchWebsite)),
+              PopupMenuItem(value: _Action.verify, child: Text(context.l10n.markVerifiedMenu)),
+              PopupMenuItem(value: _Action.merge, child: Text(context.l10n.mergeMenu)),
+              PopupMenuItem(value: _Action.delete, child: Text(context.l10n.delete)),
             ],
           ),
         ],
@@ -172,19 +176,19 @@ class _CompanyView extends ConsumerWidget {
                   children: [HiringStatusBadge(company.hiringStatus), VerificationBadge(p)],
                 ),
                 const SizedBox(height: SsSpace.md),
-                FactRow('Country', company.countryCode),
-                FactRow('Headquarters', company.headquarters),
+                FactRow(context.l10n.country, company.countryCode),
+                FactRow(context.l10n.headquarters, company.headquarters),
                 FactRow(
-                  'Industry',
+                  context.l10n.industry,
                   company.industries.isEmpty
                       ? null
-                      : company.industries.map((i) => industryLabels[i] ?? i).join(', '),
+                      : company.industries.map((i) => industryLabel(context.l10n, i)).join(', '),
                 ),
-                FactRow('Careers page', company.careersUrl, selectable: true),
-                FactRow('Recruitment e-mail', company.recruitmentEmail, selectable: true),
-                FactRow('Speculative', company.speculativePolicy),
-                if (p.lastVerifiedAt != null) FactRow('Verified on', formatDate(p.lastVerifiedAt!)),
-                if (p.sourceUrl != null) FactRow('Source', p.sourceUrl, selectable: true),
+                FactRow(context.l10n.careersPage, company.careersUrl, selectable: true),
+                FactRow(context.l10n.recruitmentEmail, company.recruitmentEmail, selectable: true),
+                FactRow(context.l10n.speculativeShort, company.speculativePolicy),
+                if (p.lastVerifiedAt != null) FactRow(context.l10n.verifiedOn, formatDate(p.lastVerifiedAt!)),
+                if (p.sourceUrl != null) FactRow(context.l10n.source, p.sourceUrl, selectable: true),
               ],
             ),
           ),
@@ -192,10 +196,10 @@ class _CompanyView extends ConsumerWidget {
           OutlinedButton.icon(
             onPressed: () => _research(context),
             icon: const Icon(Icons.travel_explore, size: 18),
-            label: const Text('Research company website'),
+            label: Text(context.l10n.researchCompanyWebsite),
           ),
           SsSectionHeader(
-            'HR contacts',
+            context.l10n.hrContacts,
             trailing: TextButton.icon(
               onPressed: () async {
                 final body = await showDialog<Map<String, dynamic>>(
@@ -207,14 +211,14 @@ class _CompanyView extends ConsumerWidget {
                 }
               },
               icon: const Icon(Icons.add, size: 18),
-              label: const Text('Add'),
+              label: Text(context.l10n.add),
             ),
           ),
           contacts.when(
             loading: () => const Padding(padding: EdgeInsets.all(SsSpace.lg), child: SsLoading()),
             error: (e, _) => Text('$e', style: const TextStyle(color: SsColors.danger)),
             data: (list) => list.isEmpty
-                ? SsCard(child: Text('No contacts yet.', style: theme.textTheme.bodySmall))
+                ? SsCard(child: Text(context.l10n.noContactsYet, style: theme.textTheme.bodySmall))
                 : Column(
                     children: [
                       for (final c in list)
@@ -225,14 +229,44 @@ class _CompanyView extends ConsumerWidget {
                     ],
                   ),
           ),
-          const SsSectionHeader('Fleet'),
-          if (company.vessels.isEmpty)
-            SsCard(
-              child: Text(
-                'No vessels linked. Add them under Tools → Fleet.',
-                style: theme.textTheme.bodySmall,
+          SsSectionHeader(
+            context.l10n.applications,
+            trailing: TextButton.icon(
+              onPressed: () async {
+                final profile = await ref.read(primaryProfileProvider.future).catchError((_) => null);
+                if (!context.mounted) return;
+                await showTrackApplication(
+                  context,
+                  ref,
+                  companyId: _id,
+                  contacts: contacts.value ?? const [],
+                  suggestedPositions: profile?.targetPositions ?? const [],
+                );
+              },
+              icon: const Icon(Icons.add, size: 18),
+              label: Text(context.l10n.trackApplication),
+            ),
+          ),
+          ref
+              .watch(companyApplicationsProvider(_id))
+              .when(
+                loading: () => const SizedBox.shrink(),
+                error: (e, _) => Text(errorText(context, e), style: const TextStyle(color: SsColors.danger)),
+                data: (apps) => apps.isEmpty
+                    ? Text(context.l10n.noApplicationsForCompany, style: theme.textTheme.bodySmall)
+                    : Column(
+                        children: [
+                          for (final a in apps)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: SsSpace.sm),
+                              child: ApplicationCard(a, showCompany: false),
+                            ),
+                        ],
+                      ),
               ),
-            )
+          SsSectionHeader(context.l10n.fleet),
+          if (company.vessels.isEmpty)
+            SsCard(child: Text(context.l10n.noVesselsLinked, style: theme.textTheme.bodySmall))
           else
             SsCard(
               padding: EdgeInsets.zero,
@@ -245,8 +279,12 @@ class _CompanyView extends ConsumerWidget {
                       title: Text(v.vesselName),
                       subtitle: Text(
                         v.role == 'owner'
-                            ? 'Owner'
-                            : 'Operator · crewing employer: ${v.isCrewingEmployer == null ? 'unknown' : (v.isCrewingEmployer! ? 'yes' : 'no')}',
+                            ? context.l10n.owner
+                            : context.l10n.operatorCrewing(
+                                v.isCrewingEmployer == null
+                                    ? context.l10n.unknownLower
+                                    : (v.isCrewingEmployer! ? context.l10n.yes : context.l10n.no),
+                              ),
                       ),
                     ),
                 ],
@@ -257,18 +295,23 @@ class _CompanyView extends ConsumerWidget {
             Text(company.fleetSummary!, style: theme.textTheme.bodyMedium),
           ],
           SsSectionHeader(
-            'Notes',
+            context.l10n.notes,
             trailing: TextButton.icon(
               onPressed: () async {
-                final text = await textInputDialog(context, title: 'Add note', label: 'Note', maxLines: 5);
+                final text = await textInputDialog(
+                  context,
+                  title: context.l10n.addNote,
+                  label: context.l10n.note,
+                  maxLines: 5,
+                );
                 if (text != null && context.mounted) await _run(context, ref, () => repo.addNote(_id, text));
               },
               icon: const Icon(Icons.add, size: 18),
-              label: const Text('Add'),
+              label: Text(context.l10n.add),
             ),
           ),
           if (company.notes.isEmpty)
-            Text('No notes.', style: theme.textTheme.bodySmall)
+            Text(context.l10n.noNotes, style: theme.textTheme.bodySmall)
           else
             for (final n in company.notes)
               Padding(
@@ -288,7 +331,7 @@ class _CompanyView extends ConsumerWidget {
                         ),
                       ),
                       IconButton(
-                        tooltip: 'Delete note',
+                        tooltip: context.l10n.deleteNote,
                         icon: const Icon(Icons.delete_outline, size: 18),
                         onPressed: () => _run(context, ref, () => repo.deleteNote(_id, n.id)),
                       ),
@@ -296,7 +339,34 @@ class _CompanyView extends ConsumerWidget {
                   ),
                 ),
               ),
-          const SsSectionHeader('Websites & sources'),
+          SsSectionHeader(context.l10n.timeline),
+          ref
+              .watch(timelineProvider(_id))
+              .when(
+                loading: () => const SizedBox.shrink(),
+                error: (e, _) => Text(errorText(context, e), style: const TextStyle(color: SsColors.danger)),
+                data: (events) => events.isEmpty
+                    ? Text(context.l10n.noTimeline, style: theme.textTheme.bodySmall)
+                    : SsCard(
+                        padding: EdgeInsets.zero,
+                        child: Column(
+                          children: [
+                            for (final e in events.take(30))
+                              ListTile(
+                                dense: true,
+                                title: Text(timelineLabel(context.l10n, e.kind)),
+                                subtitle: Text(
+                                  e.kind == 'status_changed' ? statusLabel(context.l10n, e.title) : e.title,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                trailing: Text(formatDate(e.at), style: theme.textTheme.bodySmall),
+                              ),
+                          ],
+                        ),
+                      ),
+              ),
+          SsSectionHeader(context.l10n.websitesSources),
           SsCard(
             padding: EdgeInsets.zero,
             child: Column(
@@ -305,7 +375,7 @@ class _CompanyView extends ConsumerWidget {
                 if (company.websites.isEmpty && company.sources.isEmpty)
                   Padding(
                     padding: const EdgeInsets.all(SsSpace.lg),
-                    child: Text('No sources recorded.', style: theme.textTheme.bodySmall),
+                    child: Text(context.l10n.noSources, style: theme.textTheme.bodySmall),
                   ),
                 for (final w in company.websites)
                   ListTile(

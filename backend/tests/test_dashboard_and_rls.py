@@ -147,6 +147,17 @@ def test_api_works_end_to_end_under_rls_with_ordinary_role(client):
         assert rls_client.post(f"{api}/vacancies", headers=alice, json={
             "employer_name": "RLS Fish", "position": "AB", "source_url": "https://rls.example/j"}
         ).status_code == 201
+        # Phase 4 under RLS: application with status history and an auto follow-up.
+        app = rls_client.post(f"{api}/applications", headers=alice,
+                              json={"company_id": a.json()["id"], "position": "AB"}).json()
+        upd = rls_client.patch(f"{api}/applications/{app['id']}", headers=alice,
+                               json={"status": "sent", "follow_up_in_days": 3})
+        assert upd.status_code == 200, upd.text
+        assert upd.json()["next_follow_up_at"] is not None
+        assert rls_client.get(f"{api}/applications/stats", headers=alice).json()["sent"] == 1
+        assert rls_client.get(f"{api}/companies/{a.json()['id']}/timeline", headers=alice).status_code == 200
+        assert rls_client.get(f"{api}/applications", headers=bob).json() == []
+        assert rls_client.get(f"{api}/follow-ups", headers=bob).json() == []
         assert rls_client.get(f"{api}/companies", headers=bob).json() == []
         assert rls_client.get(f"{api}/contacts", headers=bob).json() == []
         assert rls_client.get(f"{api}/vessels", headers=bob).json() == []

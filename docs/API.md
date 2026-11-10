@@ -55,11 +55,22 @@ Errors are JSON `{"detail": …}`: `401` bad/missing token, `403` deleted accoun
 | POST | `/discovery/search` | Brave Search; `503` when not configured |
 | GET/POST | `/discovery/targets`, `/discovery/targets/import` | Research targets from the brief (names only) |
 
-## Planned contracts (Phases 4–7)
+## Implemented (Phase 4)
+
+| Method | Path | Description |
+|---|---|---|
+| GET/POST | `/applications` | Filters: `status`, `company_id`, `q`. Create starts at `discovered` (history entry) |
+| GET | `/applications/board` | All 14 statuses in pipeline order with their applications |
+| GET | `/applications/stats` | Totals, sent, replied, `reply_rate` (null if nothing sent), median days to reply, follow-up counts |
+| GET/PATCH/DELETE | `/applications/{id}` | PATCH `{status, status_note, follow_up_in_days, follow_up_title, …}` writes history, stamps `sent_at` / `last_reply_at` |
+| GET/POST | `/follow-ups` | `state=open\|overdue\|done\|all`, `application_id`, `company_id` |
+| PATCH/DELETE | `/follow-ups/{id}` | `{completed: true\|false, title, due_at}` |
+| GET | `/companies/{id}/timeline` | Events newest first |
+
+## Planned contracts (Phases 5–7)
 
 | Phase | Resource | Endpoints |
 |---|---|---|
-| 4 | CRM | `GET/POST /applications`, `PATCH /applications/{id}` (status change writes history), `GET /applications/board`, `GET /companies/{id}/timeline`, `GET/POST/PATCH /follow-ups` |
 | 5 | Gmail | `GET /mail/oauth/start`, `GET /mail/oauth/callback`, `GET /mail/accounts`, `DELETE /mail/accounts/{id}`, `GET /mail/threads?folder=`, `GET /mail/threads/{id}`, `POST /mail/threads/{id}/link` (confirm/reject company link), `POST /mail/drafts`, `POST /mail/drafts/{id}/send` (requires `confirm: true` + full preview hash), `POST /mail/pubsub` (Google push, verified JWT) |
 | 6 | AI | `POST /ai/drafts` (cover letter / email / reply / follow-up), `POST /ai/translate`, `POST /ai/analyze-reply`, `POST /ai/cv-adapt`, `POST /ai/company-report`, `GET/POST /ai/conversations` |
 | 7 | Other | `/documents` (signed upload/download URLs), `/salaries/offers`, `/salaries/benchmarks`, `/safety/check`, `/interview/sessions`, `/map/features`, `/analytics/summary`, `/notifications/preferences` |

@@ -10,6 +10,8 @@ import '../features/companies/company_detail_screen.dart';
 import '../features/companies/company_form_screen.dart';
 import '../features/companies/company_models.dart';
 import '../features/companies/tools_screens.dart';
+import '../features/crm/application_detail_screen.dart';
+import '../features/crm/crm_screen.dart';
 import '../features/discover/discover_screen.dart';
 import '../features/home/dashboard_screen.dart';
 import '../features/placeholder/feature_placeholder_screen.dart';
@@ -18,6 +20,7 @@ import '../features/profile/profile_screen.dart';
 import '../features/settings/settings_screen.dart';
 import 'app_shell.dart';
 import 'features.dart';
+import '../core/l10n.dart';
 
 abstract final class Routes {
   static const setup = '/setup';
@@ -83,13 +86,11 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: Routes.mail,
-                builder: (_, _) => const FeaturePlaceholderScreen(
-                  title: 'Mail',
+                builder: (context, _) => FeaturePlaceholderScreen(
+                  title: context.l10n.navMail,
                   icon: Icons.mail_outline,
                   phase: 5,
-                  description:
-                      'Gmail inbox linked to companies and applications. '
-                      'Every outgoing e-mail needs your explicit approval.',
+                  description: context.l10n.mailDesc,
                 ),
               ),
             ],
@@ -112,28 +113,34 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: Routes.settings, builder: (_, _) => const SettingsScreen()),
       GoRoute(
+        path: '/applications/:id',
+        builder: (_, state) => ApplicationDetailScreen(applicationId: state.pathParameters['id']!),
+      ),
+      GoRoute(
         path: '/tools/:id',
-        builder: (_, state) {
+        builder: (context, state) {
           switch (state.pathParameters['id']) {
             case 'contacts':
               return const ContactsScreen();
+            case 'crm':
+              return const CrmScreen();
             case 'fleet':
               return const FleetScreen();
           }
           final f = featureById(state.pathParameters['id']!);
           if (f == null) {
-            return const FeaturePlaceholderScreen(
-              title: 'Not found',
+            return FeaturePlaceholderScreen(
+              title: context.l10n.notFound,
               icon: Icons.help_outline,
               phase: 0,
               description: '',
             );
           }
           return FeaturePlaceholderScreen(
-            title: f.title,
+            title: f.title(context.l10n),
             icon: f.icon,
             phase: f.phase,
-            description: f.description,
+            description: f.description(context.l10n),
             standalone: true,
           );
         },

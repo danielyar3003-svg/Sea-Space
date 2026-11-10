@@ -6,6 +6,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sea_space/features/companies/company_models.dart';
+import 'package:sea_space/features/crm/crm_models.dart';
 import 'package:sea_space/features/home/dashboard_repository.dart';
 import 'package:sea_space/features/profile/profile_models.dart';
 
@@ -55,5 +56,27 @@ void main() {
     final p = CandidateProfile.fromJson(data['primary_profile'] as Map<String, dynamic>);
     expect(p.yearsOfExperience, 4);
     expect(p.englishLevel, 'intermediate');
+  });
+
+  test('CRM: application, board, stats, follow-ups, timeline', () {
+    final app = Application.fromJson(data['application_detail'] as Map<String, dynamic>);
+    expect(app.status, 'sent');
+    expect(app.companyName, 'Contract Fishing AS');
+    expect(app.history.first.fromStatus, 'discovered');
+    expect(app.history.first.note, 'CV sent');
+    expect(app.followUps.single.done, isFalse);
+    expect(app.nextFollowUpAt, isNotNull);
+    final board = list('board');
+    expect(board.map((c) => c['status']), applicationStatuses);
+    final stats = PipelineStats.fromJson(data['stats'] as Map<String, dynamic>);
+    expect(stats.sent, 1);
+    expect(stats.replyRate, 0);
+    expect(FollowUp.fromJson(list('follow_ups').single).companyName, 'Contract Fishing AS');
+    final kinds = list('timeline').map(TimelineEvent.fromJson).map((e) => e.kind).toSet();
+    expect(
+      kinds,
+      containsAll(['company_added', 'application_created', 'status_changed', 'follow_up_created']),
+    );
+    expect((data['me'] as Map)['locale'], 'en');
   });
 }

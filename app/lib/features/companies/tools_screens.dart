@@ -8,6 +8,7 @@ import 'company_models.dart';
 import 'company_repository.dart';
 import 'company_widgets.dart';
 import 'contact_dialog.dart';
+import '../../core/l10n.dart';
 
 /// Tools → HR Contacts: every contact across companies, filterable by verification.
 class ContactsScreen extends ConsumerStatefulWidget {
@@ -20,20 +21,20 @@ class ContactsScreen extends ConsumerStatefulWidget {
 class _ContactsScreenState extends ConsumerState<ContactsScreen> {
   String _filter = 'all';
 
-  static const _filters = {
-    'all': 'All',
-    'verified': 'Verified',
-    'unverified': 'Unverified',
-    'generic': 'Recruitment inboxes',
-    'people': 'People',
-    'inferred': 'Guessed e-mails',
+  Map<String, String> _filters(BuildContext context) => {
+    'all': context.l10n.all,
+    'verified': context.l10n.filterVerified,
+    'unverified': context.l10n.filterUnverified,
+    'generic': context.l10n.filterInboxes,
+    'people': context.l10n.filterPeople,
+    'inferred': context.l10n.filterGuessed,
   };
 
   @override
   Widget build(BuildContext context) {
     final contacts = ref.watch(contactsProvider(_filter));
     return Scaffold(
-      appBar: AppBar(title: const Text('HR Contacts')),
+      appBar: AppBar(title: Text(context.l10n.contactsTitle)),
       body: Column(
         children: [
           SizedBox(
@@ -42,7 +43,7 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: SsSpace.gutter, vertical: SsSpace.sm),
               children: [
-                for (final e in _filters.entries)
+                for (final e in _filters(context).entries)
                   Padding(
                     padding: const EdgeInsets.only(right: SsSpace.sm),
                     child: ChoiceChip(
@@ -60,10 +61,10 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
               loading: () => const SsLoading(),
               error: (e, _) => SsErrorState(error: e, onRetry: () => ref.invalidate(contactsProvider)),
               data: (list) => list.isEmpty
-                  ? const SsMessageState(
+                  ? SsMessageState(
                       icon: Icons.badge_outlined,
-                      title: 'No contacts here',
-                      message: 'Contacts are added on a company page, or imported from website research.',
+                      title: context.l10n.noContactsHere,
+                      message: context.l10n.noContactsHereBody,
                     )
                   : ListView.separated(
                       padding: const EdgeInsets.fromLTRB(SsSpace.gutter, 0, SsSpace.gutter, SsSpace.xxxl),
@@ -109,7 +110,7 @@ class FleetScreen extends ConsumerWidget {
     final companies = await repo.list(const CompanyQuery());
     if (!context.mounted) return;
     if (companies.isEmpty) {
-      showInfo(context, 'Add the company first under Companies.');
+      showInfo(context, context.l10n.addCompanyFirst);
       return;
     }
     final result = await showDialog<(String, String)>(
@@ -130,22 +131,20 @@ class FleetScreen extends ConsumerWidget {
     final vessels = ref.watch(vesselsProvider);
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Fleet')),
+      appBar: AppBar(title: Text(context.l10n.fleet)),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _addVessel(context, ref),
         icon: const Icon(Icons.add),
-        label: const Text('Add vessel'),
+        label: Text(context.l10n.addVessel),
       ),
       body: vessels.when(
         loading: () => const SsLoading(),
         error: (e, _) => SsErrorState(error: e, onRetry: () => ref.invalidate(vesselsProvider)),
         data: (list) => list.isEmpty
-            ? const SsMessageState(
+            ? SsMessageState(
                 icon: Icons.directions_boat_outlined,
-                title: 'No vessels yet',
-                message:
-                    'Add vessels and link their owner and operator. The operator is often, '
-                    'but not always, the company that hires the crew.',
+                title: context.l10n.noVesselsYet,
+                message: context.l10n.noVesselsBody,
               )
             : SsPage(
                 children: [
@@ -165,19 +164,22 @@ class FleetScreen extends ConsumerWidget {
                               ],
                             ),
                             const SizedBox(height: SsSpace.sm),
-                            FactRow('IMO', v.imoNumber),
-                            FactRow('Flag', v.flagCountryCode),
-                            FactRow('Type', v.type?.name),
+                            FactRow(context.l10n.imo, v.imoNumber),
+                            FactRow(context.l10n.flag, v.flagCountryCode),
+                            FactRow(context.l10n.type, v.type?.name),
                             for (final l in v.links)
-                              FactRow(l.role == 'owner' ? 'Owner' : 'Operator', l.companyName),
+                              FactRow(
+                                l.role == 'owner' ? context.l10n.owner : context.l10n.operator,
+                                l.companyName,
+                              ),
                             if (v.potentialPositions.isNotEmpty)
-                              FactRow('Typical positions', v.potentialPositions.join(', ')),
+                              FactRow(context.l10n.typicalPositions, v.potentialPositions.join(', ')),
                             Align(
                               alignment: Alignment.centerLeft,
                               child: TextButton.icon(
                                 onPressed: () => _link(context, ref, v),
                                 icon: const Icon(Icons.link, size: 18),
-                                label: const Text('Link owner / operator'),
+                                label: Text(context.l10n.linkOwnerOperator),
                               ),
                             ),
                           ],
@@ -228,16 +230,16 @@ class _VesselDialogState extends State<_VesselDialog> {
   void _save() {
     final imo = _imo.text.trim();
     if (_name.text.trim().isEmpty) {
-      setState(() => _error = 'Vessel name is required');
+      setState(() => _error = context.l10n.vesselNameRequired);
       return;
     }
     if (imo.isNotEmpty && !_validImo(imo)) {
-      setState(() => _error = 'IMO number is not valid (7 digits with a check digit)');
+      setState(() => _error = context.l10n.imoInvalid);
       return;
     }
     final src = _source.text.trim();
-    if (src.isNotEmpty && validateUrl(src) != null) {
-      setState(() => _error = 'Source: ${validateUrl(src)}');
+    if (src.isNotEmpty && validateUrl(context, src) != null) {
+      setState(() => _error = context.l10n.sourceLabel(validateUrl(context, src)!));
       return;
     }
     Navigator.pop(context, {
@@ -252,7 +254,7 @@ class _VesselDialogState extends State<_VesselDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add vessel'),
+      title: Text(context.l10n.addVessel),
       content: SizedBox(
         width: 420,
         child: SingleChildScrollView(
@@ -261,28 +263,28 @@ class _VesselDialogState extends State<_VesselDialog> {
             children: [
               TextField(
                 controller: _name,
-                decoration: const InputDecoration(labelText: 'Vessel name *'),
+                decoration: InputDecoration(labelText: context.l10n.vesselNameStar),
               ),
               const SizedBox(height: SsSpace.md),
               TextField(
                 controller: _imo,
                 keyboardType: TextInputType.number,
                 maxLength: 7,
-                decoration: const InputDecoration(labelText: 'IMO number', counterText: ''),
+                decoration: InputDecoration(labelText: context.l10n.imoNumber, counterText: ''),
               ),
               const SizedBox(height: SsSpace.md),
               TextField(
                 controller: _flag,
                 maxLength: 2,
-                decoration: const InputDecoration(labelText: 'Flag (2 letters)', counterText: ''),
+                decoration: InputDecoration(labelText: context.l10n.flagTwoLetters, counterText: ''),
               ),
               const SizedBox(height: SsSpace.md),
               DropdownButtonFormField<String?>(
                 isExpanded: true,
                 initialValue: _typeId,
-                decoration: const InputDecoration(labelText: 'Vessel type'),
+                decoration: InputDecoration(labelText: context.l10n.vesselType),
                 items: [
-                  const DropdownMenuItem(value: null, child: Text('Unknown')),
+                  DropdownMenuItem(value: null, child: Text(context.l10n.unknown)),
                   for (final t in widget.types) DropdownMenuItem(value: t.id, child: Text(t.name)),
                 ],
                 onChanged: (v) => setState(() => _typeId = v),
@@ -290,7 +292,7 @@ class _VesselDialogState extends State<_VesselDialog> {
               const SizedBox(height: SsSpace.md),
               TextField(
                 controller: _source,
-                decoration: const InputDecoration(labelText: 'Source (registry page)', hintText: 'https://'),
+                decoration: InputDecoration(labelText: context.l10n.registrySource, hintText: 'https://'),
               ),
               if (_error != null)
                 Padding(
@@ -302,8 +304,8 @@ class _VesselDialogState extends State<_VesselDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-        FilledButton(onPressed: _save, child: const Text('Add')),
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.cancel)),
+        FilledButton(onPressed: _save, child: Text(context.l10n.add)),
       ],
     );
   }
@@ -324,7 +326,7 @@ class _LinkDialogState extends State<_LinkDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Link company'),
+      title: Text(context.l10n.linkCompany),
       content: SizedBox(
         width: 420,
         child: Column(
@@ -333,15 +335,15 @@ class _LinkDialogState extends State<_LinkDialog> {
             DropdownButtonFormField<String>(
               isExpanded: true,
               initialValue: _company,
-              decoration: const InputDecoration(labelText: 'Company'),
+              decoration: InputDecoration(labelText: context.l10n.company),
               items: [for (final c in widget.companies) DropdownMenuItem(value: c.id, child: Text(c.name))],
               onChanged: (v) => setState(() => _company = v ?? _company),
             ),
             const SizedBox(height: SsSpace.md),
             SegmentedButton<String>(
-              segments: const [
-                ButtonSegment(value: 'owner', label: Text('Owner')),
-                ButtonSegment(value: 'operator', label: Text('Operator')),
+              segments: [
+                ButtonSegment(value: 'owner', label: Text(context.l10n.owner)),
+                ButtonSegment(value: 'operator', label: Text(context.l10n.operator)),
               ],
               selected: {_role},
               onSelectionChanged: (s) => setState(() => _role = s.first),
@@ -350,8 +352,11 @@ class _LinkDialogState extends State<_LinkDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-        FilledButton(onPressed: () => Navigator.pop(context, (_company, _role)), child: const Text('Link')),
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.cancel)),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, (_company, _role)),
+          child: Text(context.l10n.link),
+        ),
       ],
     );
   }
@@ -366,12 +371,12 @@ class DuplicatesScreen extends ConsumerWidget {
     final pairs = ref.watch(duplicatesProvider);
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Possible duplicates')),
+      appBar: AppBar(title: Text(context.l10n.possibleDuplicates)),
       body: pairs.when(
         loading: () => const SsLoading(),
         error: (e, _) => SsErrorState(error: e, onRetry: () => ref.invalidate(duplicatesProvider)),
         data: (list) => list.isEmpty
-            ? const SsMessageState(icon: Icons.check_circle_outline, title: 'No duplicates found')
+            ? SsMessageState(icon: Icons.check_circle_outline, title: context.l10n.noDuplicates)
             : SsPage(
                 children: [
                   for (final (a, b, reason) in list)
@@ -391,10 +396,7 @@ class DuplicatesScreen extends ConsumerWidget {
                                 trailing: const Icon(Icons.chevron_right, color: SsColors.textTertiary),
                                 onTap: () => context.push('/companies/${c.id}'),
                               ),
-                            Text(
-                              'Open the one to remove and choose "Merge into another company".',
-                              style: theme.textTheme.bodySmall,
-                            ),
+                            Text(context.l10n.duplicatesHelp, style: theme.textTheme.bodySmall),
                           ],
                         ),
                       ),

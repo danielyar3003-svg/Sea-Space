@@ -10,6 +10,7 @@ import 'profile_edit_screen.dart';
 import '../home/dashboard_repository.dart';
 import 'profile_models.dart';
 import 'profile_repository.dart';
+import '../../core/l10n.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -19,17 +20,17 @@ class ProfileScreen extends ConsumerWidget {
     final profile = ref.watch(primaryProfileProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: Text(context.l10n.profile),
         actions: [
           if (profile.value != null)
             IconButton(
-              tooltip: 'Edit profile',
+              tooltip: context.l10n.editProfile,
               icon: const Icon(Icons.edit_outlined),
               onPressed: () =>
                   context.push(Routes.profileEdit, extra: ProfileEditArgs(existing: profile.value)),
             ),
           IconButton(
-            tooltip: 'Settings',
+            tooltip: context.l10n.settings,
             icon: const Icon(Icons.settings_outlined),
             onPressed: () => context.push(Routes.settings),
           ),
@@ -51,10 +52,8 @@ class _NoProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return SsMessageState(
       icon: Icons.person_add_alt_outlined,
-      title: 'Create your maritime profile',
-      message:
-          'Start from the suggested profile (you can change everything before saving), '
-          'or start from a blank form.',
+      title: context.l10n.createProfileTitle,
+      message: context.l10n.createProfileBody,
       action: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -63,12 +62,12 @@ class _NoProfile extends StatelessWidget {
               Routes.profileEdit,
               extra: const ProfileEditArgs(template: CandidateProfile.suggestedInitial),
             ),
-            child: const Text('Review suggested profile'),
+            child: Text(context.l10n.reviewSuggestedProfile),
           ),
           const SizedBox(height: SsSpace.sm),
           OutlinedButton(
             onPressed: () => context.push(Routes.profileEdit, extra: const ProfileEditArgs()),
-            child: const Text('Start blank'),
+            child: Text(context.l10n.startBlank),
           ),
         ],
       ),
@@ -97,7 +96,7 @@ class _ProfileView extends ConsumerWidget {
       ref.invalidate(dashboardProvider);
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorText(context, e))));
       }
     }
   }
@@ -106,11 +105,11 @@ class _ProfileView extends ConsumerWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete this entry?'),
-        content: Text(e.vesselName ?? e.position ?? 'Experience entry'),
+        title: Text(context.l10n.deleteEntry),
+        content: Text(e.vesselName ?? e.position ?? context.l10n.experienceEntry),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Delete')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(context.l10n.cancel)),
+          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(context.l10n.delete)),
         ],
       ),
     );
@@ -121,7 +120,7 @@ class _ProfileView extends ConsumerWidget {
       ref.invalidate(dashboardProvider);
     } catch (err) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$err')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorText(context, err))));
       }
     }
   }
@@ -131,11 +130,13 @@ class _ProfileView extends ConsumerWidget {
     final theme = Theme.of(context);
     final years = profile.yearsOfExperience;
     final facts = <(String, String?)>[
-      ('Nationality', profile.nationality),
-      ('English', englishLevels[profile.englishLevel]),
+      (context.l10n.nationality, profile.nationality),
+      (context.l10n.english, englishLevelLabel(context.l10n, profile.englishLevel)),
       (
-        'Sea experience',
-        years == null ? null : '${profile.experienceIsApproximate ? '≈ ' : ''}${_fmt(years)} years',
+        context.l10n.seaExperience,
+        years == null
+            ? null
+            : context.l10n.yearsValue(profile.experienceIsApproximate ? '≈ ' : '', _fmt(years)),
       ),
     ];
 
@@ -149,9 +150,12 @@ class _ProfileView extends ConsumerWidget {
               Row(
                 children: [
                   Expanded(
-                    child: Text(profile.fullName ?? 'Name not set', style: theme.textTheme.titleLarge),
+                    child: Text(
+                      profile.fullName ?? context.l10n.nameNotSet,
+                      style: theme.textTheme.titleLarge,
+                    ),
                   ),
-                  if (profile.isPrimary) const SsBadge('PRIMARY'),
+                  if (profile.isPrimary) SsBadge(context.l10n.primary),
                 ],
               ),
               const SizedBox(height: SsSpace.xxs),
@@ -165,7 +169,7 @@ class _ProfileView extends ConsumerWidget {
                       SizedBox(width: 130, child: Text(k, style: theme.textTheme.bodySmall)),
                       Expanded(
                         child: Text(
-                          v ?? 'Not set',
+                          v ?? context.l10n.notSet,
                           style: v == null ? const TextStyle(color: SsColors.textTertiary) : null,
                         ),
                       ),
@@ -179,20 +183,20 @@ class _ProfileView extends ConsumerWidget {
             ],
           ),
         ),
-        const SsSectionHeader('Target positions'),
-        _Chips(profile.targetPositions, empty: 'No target positions yet.'),
-        const SsSectionHeader('Experience areas'),
-        _Chips(profile.experienceAreas, empty: 'No experience areas yet.'),
+        SsSectionHeader(context.l10n.targetPositions),
+        _Chips(profile.targetPositions, empty: context.l10n.noTargetPositions),
+        SsSectionHeader(context.l10n.experienceAreas),
+        _Chips(profile.experienceAreas, empty: context.l10n.noExperienceAreas),
         SsSectionHeader(
-          'Sea service',
+          context.l10n.seaService,
           trailing: TextButton.icon(
             onPressed: () => _editExperience(context, ref),
             icon: const Icon(Icons.add, size: 18),
-            label: const Text('Add'),
+            label: Text(context.l10n.add),
           ),
         ),
         if (profile.experience.isEmpty)
-          SsCard(child: Text('No vessels added yet.', style: theme.textTheme.bodySmall))
+          SsCard(child: Text(context.l10n.noVesselsAdded, style: theme.textTheme.bodySmall))
         else
           for (final e in profile.experience)
             Padding(
@@ -208,9 +212,12 @@ class _ProfileView extends ConsumerWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(e.vesselName ?? 'Vessel not named', style: theme.textTheme.titleSmall),
                           Text(
-                            [e.position, e.vesselType, _period(e)].whereType<String>().join(' · '),
+                            e.vesselName ?? context.l10n.vesselNotNamed,
+                            style: theme.textTheme.titleSmall,
+                          ),
+                          Text(
+                            [e.position, e.vesselType, _period(context, e)].whereType<String>().join(' · '),
                             style: theme.textTheme.bodySmall,
                           ),
                           if (e.duties.isNotEmpty) ...[
@@ -221,7 +228,7 @@ class _ProfileView extends ConsumerWidget {
                       ),
                     ),
                     IconButton(
-                      tooltip: 'Delete',
+                      tooltip: context.l10n.delete,
                       icon: const Icon(Icons.delete_outline, size: 20),
                       onPressed: () => _deleteExperience(context, ref, e),
                     ),
@@ -235,10 +242,10 @@ class _ProfileView extends ConsumerWidget {
 
   static String _fmt(double v) => v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(1);
 
-  static String? _period(Experience e) {
+  static String? _period(BuildContext context, Experience e) {
     String f(DateTime d) => '${d.month.toString().padLeft(2, '0')}/${d.year}';
-    if (e.startDate == null && e.endDate == null) return 'Dates not provided';
-    return '${e.startDate == null ? '?' : f(e.startDate!)} – ${e.endDate == null ? 'present' : f(e.endDate!)}';
+    if (e.startDate == null && e.endDate == null) return context.l10n.datesNotProvided;
+    return '${e.startDate == null ? '?' : f(e.startDate!)} – ${e.endDate == null ? context.l10n.present : f(e.endDate!)}';
   }
 }
 

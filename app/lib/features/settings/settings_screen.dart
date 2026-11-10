@@ -4,18 +4,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/providers.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/widgets/widgets.dart';
+import '../../core/l10n.dart';
+import '../../core/widgets/language_picker.dart';
 
 /// Real server status: which integrations are configured on the backend.
 final serverStatusProvider = FutureProvider.autoDispose<Map<String, dynamic>>(
   (ref) async => await ref.watch(apiClientProvider).get('/health/ready') as Map<String, dynamic>,
 );
 
-const _integrationLabels = {
-  'supabase_auth': 'Supabase authentication',
-  'token_encryption': 'Token encryption key',
-  'anthropic': 'Claude API (AI assistant)',
-  'gmail_oauth': 'Gmail OAuth',
-  'gmail_pubsub': 'Gmail push notifications (Pub/Sub)',
+Map<String, String> _integrationLabels(BuildContext context) => {
+  'supabase_auth': context.l10n.integrationSupabase,
+  'token_encryption': context.l10n.integrationEncryption,
+  'anthropic': context.l10n.integrationAnthropic,
+  'gmail_oauth': context.l10n.integrationGmail,
+  'gmail_pubsub': context.l10n.integrationPubsub,
+  'web_search': context.l10n.integrationSearch,
 };
 
 class SettingsScreen extends ConsumerWidget {
@@ -25,17 +28,14 @@ class SettingsScreen extends ConsumerWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete account permanently?'),
-        content: const Text(
-          'All your profiles, companies, applications and other data in SEA SPACE '
-          'will be deleted. This cannot be undone.',
-        ),
+        title: Text(context.l10n.deleteAccountTitle),
+        content: Text(context.l10n.deleteAccountBody),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(context.l10n.cancel)),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: SsColors.danger, foregroundColor: Colors.white),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete'),
+            child: Text(context.l10n.delete),
           ),
         ],
       ),
@@ -59,37 +59,48 @@ class SettingsScreen extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(context.l10n.settings)),
       body: SsPage(
         onRefresh: () => ref.refresh(serverStatusProvider.future),
         children: [
-          const SsSectionHeader('Account'),
+          SsSectionHeader(context.l10n.language),
+          SsCard(
+            padding: EdgeInsets.zero,
+            child: ListTile(
+              leading: const Icon(Icons.language),
+              title: Text(context.l10n.language),
+              subtitle: Text(currentLanguageName(context, ref)),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => showLanguagePicker(context, ref),
+            ),
+          ),
+          SsSectionHeader(context.l10n.account),
           SsCard(
             padding: EdgeInsets.zero,
             child: Column(
               children: [
                 ListTile(
                   leading: const Icon(Icons.alternate_email),
-                  title: Text(auth?.email ?? '—'),
-                  subtitle: const Text('Signed in'),
+                  title: Text(auth?.email ?? context.l10n.notEnoughData),
+                  subtitle: Text(context.l10n.signedIn),
                 ),
                 const Divider(),
                 ListTile(
                   leading: const Icon(Icons.logout),
-                  title: const Text('Sign out'),
+                  title: Text(context.l10n.signOut),
                   onTap: () => auth?.signOut(),
                 ),
               ],
             ),
           ),
-          const SsSectionHeader('Server'),
+          SsSectionHeader(context.l10n.server),
           SsCard(
             padding: EdgeInsets.zero,
             child: status.when(
               loading: () => const Padding(padding: EdgeInsets.all(SsSpace.xl), child: SsLoading()),
               error: (e, _) => ListTile(
                 leading: const Icon(Icons.cloud_off_outlined, color: SsColors.warning),
-                title: const Text('Server unreachable'),
+                title: Text(context.l10n.serverUnreachable),
                 subtitle: Text('${config.apiBaseUrl}\n$e'),
                 isThreeLine: true,
               ),
@@ -99,17 +110,17 @@ class SettingsScreen extends ConsumerWidget {
                   children: [
                     ListTile(
                       leading: const Icon(Icons.dns_outlined, color: SsColors.success),
-                      title: const Text('API connected'),
+                      title: Text(context.l10n.apiConnected),
                       subtitle: Text('${config.apiBaseUrl} · ${s['environment']}'),
                     ),
                     for (final e in integrations.entries) ...[
                       const Divider(),
                       ListTile(
                         dense: true,
-                        title: Text(_integrationLabels[e.key] ?? e.key),
+                        title: Text(_integrationLabels(context)[e.key] ?? e.key),
                         trailing: e.value
-                            ? const SsBadge('CONFIGURED', color: SsColors.success)
-                            : const SsBadge('NOT CONFIGURED', color: SsColors.textTertiary),
+                            ? SsBadge(context.l10n.configured, color: SsColors.success)
+                            : SsBadge(context.l10n.notConfigured, color: SsColors.textTertiary),
                       ),
                     ],
                   ],
@@ -117,13 +128,13 @@ class SettingsScreen extends ConsumerWidget {
               },
             ),
           ),
-          const SsSectionHeader('Privacy'),
+          SsSectionHeader(context.l10n.privacy),
           SsCard(
             padding: EdgeInsets.zero,
             child: ListTile(
               leading: const Icon(Icons.delete_forever_outlined, color: SsColors.danger),
-              title: const Text('Delete account', style: TextStyle(color: SsColors.danger)),
-              subtitle: Text('Permanently removes your SEA SPACE data', style: theme.textTheme.bodySmall),
+              title: Text(context.l10n.deleteAccount, style: TextStyle(color: SsColors.danger)),
+              subtitle: Text(context.l10n.deleteAccountSubtitle, style: theme.textTheme.bodySmall),
               onTap: () => _deleteAccount(context, ref),
             ),
           ),
