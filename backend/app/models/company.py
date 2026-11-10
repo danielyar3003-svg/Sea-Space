@@ -3,6 +3,7 @@ from datetime import date, datetime
 from decimal import Decimal
 
 from sqlalchemy import (
+    CheckConstraint,
     Date,
     DateTime,
     ForeignKey,
@@ -144,6 +145,10 @@ class CompanyContact(OwnedMixin, ProvenanceMixin, TimestampMixin, SoftDeleteMixi
         enum_check("email_status", values(EmailStatus)),
         enum_check("contact_status", values(ContactStatus)),
         *ProvenanceMixin.provenance_checks(),
+        CheckConstraint(
+            "NOT (email_status = 'inferred' AND verification_status = 'verified')",
+            name="inferred_not_verified",
+        ),
         Index("ix_company_contacts_user_email", "user_id", "email"),
     )
 

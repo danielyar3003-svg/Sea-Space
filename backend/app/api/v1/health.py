@@ -29,5 +29,6 @@ def ready(db: DbDep, settings: SettingsDep) -> dict:
             "anthropic": settings.anthropic_api_key is not None,
             "gmail_oauth": bool(settings.google_client_id and settings.google_client_secret),
             "gmail_pubsub": settings.google_pubsub_topic is not None,
+            "web_search": settings.brave_search_api_key is not None,
         },
     }

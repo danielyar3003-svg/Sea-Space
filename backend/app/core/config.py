@@ -47,6 +47,12 @@ class Settings(BaseSettings):
     google_client_secret: SecretStr | None = None
     google_pubsub_topic: str | None = None
 
+    # --- Discovery engine ----------------------------------------------------------------
+    brave_search_api_key: SecretStr | None = None
+    discovery_min_interval_seconds: float = 1.0
+    # Only for tests/local fixtures. Never enable in production (SSRF protection).
+    discovery_allow_private_hosts: bool = False
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
@@ -60,6 +66,8 @@ class Settings(BaseSettings):
         if self.app_env == "production":
             if not self.auth_configured:
                 raise ValueError("Supabase auth must be configured in production")
+            if self.discovery_allow_private_hosts:
+                raise ValueError("DISCOVERY_ALLOW_PRIVATE_HOSTS must be off in production")
             if "*" in self.cors_origin_list:
                 raise ValueError("Wildcard CORS is not allowed in production")
         return self

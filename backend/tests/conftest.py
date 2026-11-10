@@ -15,6 +15,9 @@ os.environ.update({
     "DATABASE_URL": TEST_DB,
     "SUPABASE_URL": TEST_SUPABASE_URL,
     "SUPABASE_JWT_SECRET": TEST_JWT_SECRET,
+    # Discovery tests read a local fixture website on 127.0.0.1.
+    "DISCOVERY_ALLOW_PRIVATE_HOSTS": "true",
+    "DISCOVERY_MIN_INTERVAL_SECONDS": "0",
 })
 
 import jwt  # noqa: E402

@@ -127,6 +127,30 @@ def test_api_works_end_to_end_under_rls_with_ordinary_role(client):
                                 headers=alice).status_code == 200
         assert rls_client.get(f"/api/v1/profiles/{pid}", headers=bob).status_code == 404
         assert rls_client.get("/api/v1/dashboard/summary", headers=alice).status_code == 200
+
+        # Phase 3 endpoints under RLS: companies, contacts, fleet, merge, vacancies.
+        api = "/api/v1"
+        a = rls_client.post(f"{api}/companies", json={"name": "RLS Fish", "industries": ["krill"]},
+                            headers=alice)
+        assert a.status_code == 201, a.text
+        b = rls_client.post(f"{api}/companies", json={"name": "RLS Fish Two", "allow_duplicate": True},
+                            headers=alice).json()
+        assert rls_client.post(f"{api}/companies/{b['id']}/contacts", json={"email": "crew@rls.example"},
+                               headers=alice).status_code == 201
+        vessel = rls_client.post(f"{api}/vessels", json={"name": "RLS Vessel"}, headers=alice).json()
+        assert rls_client.post(f"{api}/vessels/{vessel['id']}/links", headers=alice,
+                               json={"company_id": b["id"], "role": "operator"}).status_code == 201
+        merged = rls_client.post(f"{api}/companies/{b['id']}/merge", json={"into_id": a.json()["id"]},
+                                 headers=alice)
+        assert merged.status_code == 200, merged.text
+        assert merged.json()["contacts_count"] == 1 and merged.json()["vessels"]
+        assert rls_client.post(f"{api}/vacancies", headers=alice, json={
+            "employer_name": "RLS Fish", "position": "AB", "source_url": "https://rls.example/j"}
+        ).status_code == 201
+        assert rls_client.get(f"{api}/companies", headers=bob).json() == []
+        assert rls_client.get(f"{api}/contacts", headers=bob).json() == []
+        assert rls_client.get(f"{api}/vessels", headers=bob).json() == []
+        assert len(rls_client.get(f"{api}/vessel-types", headers=bob).json()) == 9
     finally:
         engine.dispose()
         with get_engine().begin() as conn:

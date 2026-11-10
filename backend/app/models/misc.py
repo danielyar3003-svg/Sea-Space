@@ -4,7 +4,17 @@ import uuid
 from datetime import date, datetime
 from decimal import Decimal
 
-from sqlalchemy import Boolean, Date, DateTime, ForeignKey, Integer, Numeric, String, Text
+from sqlalchemy import (
+    Boolean,
+    Date,
+    DateTime,
+    ForeignKey,
+    Index,
+    Integer,
+    Numeric,
+    String,
+    Text,
+)
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -116,6 +126,7 @@ class AIGeneratedDraft(OwnedMixin, TimestampMixin, Base):
 
 class SearchHistory(OwnedMixin, TimestampMixin, Base):
     __tablename__ = "search_history"
+    __table_args__ = (Index("ix_search_history_user_created", "user_id", "created_at"),)
 
     id: Mapped[uuid.UUID] = uuid_pk()
     kind: Mapped[str] = mapped_column(String(30), nullable=False)  # companies, vacancies, ...
